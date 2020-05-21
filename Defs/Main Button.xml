@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+    <MainButtonDef>
+        <defName>Wiki</defName>
+        <label>wiki</label>
+        <description>View mod wiki pages.</description>
+        <tabWindowClass>InGameWikiMod.MainButtonUI</tabWindowClass>
+        <order>81</order>
+        <validWithoutMap>true</validWithoutMap>
+        <minimized>True</minimized>
+        <iconPath>InGameWiki/UI/Icon</iconPath>
+    </MainButtonDef>
+
+</Defs>

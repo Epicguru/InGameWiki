@@ -7,7 +7,7 @@
     <ProjectGuid>{BC06B33E-FEB9-4E57-8245-1B54CEE596C8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mod</RootNamespace>
+    <RootNamespace>InGameWikiMod</RootNamespace>
     <AssemblyName>Mod</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MainButtonUI.cs" />
     <Compile Include="ModCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

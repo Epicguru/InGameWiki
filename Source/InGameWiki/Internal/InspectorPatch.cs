@@ -12,7 +12,10 @@ namespace InGameWiki.Internal
 
             var def = ___def ?? ___thing.def;
 
-            (ModWiki wiki, WikiPage page) = ModWiki.TryFindPage(def);
+            if (def == null)
+                return;
+
+            (ModWiki wiki, WikiPage page) = ModWiki.GlobalFindPageFromDef(def.defName);
 
             if (page == null)
                 return;
@@ -20,7 +23,7 @@ namespace InGameWiki.Internal
             if (Widgets.ButtonText(new Rect(inRect.x + inRect.width * 0.5f + 6, inRect.y + 24, 180, 36), "Open wiki page"))
             {
                 __instance.Close(true);
-                ModWiki.OpenPage(wiki, page);
+                ModWiki.ShowPage(wiki, page);
             }
         }
     }

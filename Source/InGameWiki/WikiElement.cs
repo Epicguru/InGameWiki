@@ -119,7 +119,7 @@ namespace InGameWiki
 
                 if (isLink && PageLinkReal.page == null && !IsLinkBroken)
                 {
-                    var found = ModWiki.TryFindPage(PageLink);
+                    var found = ModWiki.GlobalFindPageFromID(PageLink);
                     if (found.page == null)
                     {
                         IsLinkBroken = true;
@@ -143,7 +143,7 @@ namespace InGameWiki
                     if (!IsLinkBroken && Widgets.ButtonInvisible(bounds))
                     {
                         // Go to link.
-                        ModWiki.OpenPage(PageLinkReal.wiki, PageLinkReal.page);
+                        ModWiki.ShowPage(PageLinkReal.wiki, PageLinkReal.page);
                     }
                 }
 

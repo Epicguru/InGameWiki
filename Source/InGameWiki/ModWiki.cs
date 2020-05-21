@@ -158,7 +158,7 @@ namespace InGameWiki
         /// <summary>
         /// Opens the wiki window to a specific page from a specific wiki.
         /// </summary>
-        public static void OpenPage(ModWiki wiki, WikiPage page)
+        public static void ShowPage(ModWiki wiki, WikiPage page)
         {
             if (wiki == null || page == null)
                 return;

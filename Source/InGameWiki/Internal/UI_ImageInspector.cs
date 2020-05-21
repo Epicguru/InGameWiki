@@ -36,7 +36,7 @@ namespace InGameWiki.Internal
                 Close();
                 return;
             }
-
+            
             Widgets.DrawTextureFitted(inRect, Image, 1f);
         }
     }

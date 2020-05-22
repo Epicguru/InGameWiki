@@ -1,4 +1,5 @@
-﻿using Verse;
+﻿using InGameWiki;
+using Verse;
 
 namespace InGameWikiMod
 {
@@ -6,8 +7,7 @@ namespace InGameWikiMod
     {
         public ModCore(ModContentPack content) : base(content)
         {
-            Log.Message("<color=cyan>Loaded in-game wiki mod.</color>");
-            Log.Message($"<color=cyan>{typeof(MainButtonUI).FullName}</color>");
+            Log.Message($"<color=cyan>Loaded in-game wiki mod: Version {ModWiki.Version}</color>");
         }
     }
 }

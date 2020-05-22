@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata>
-    <id>co.uk.epicguru.ingamewiki</id>
+    <title>In-game wiki API</title>
+    <id>Lib.InGameWiki</id>
     <version>1.0.0</version>
     <authors>Epicguru</authors>
     <owners>Epicguru</owners>
+    <summary>Adds support for the in-game wiki mod to your own mod. (Rimworld game)</summary>
+    <description>Adds support for the in-game wiki mod to your own mod. (Rimworld game)</description>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/Epicguru/InGameWiki</projectUrl>
-    <!-- <icon>Icon.ico</icon> -->
-    <description>Library to add support for the in-game wiki mod.</description>
+    <icon>Icon.png</icon>
     <releaseNotes>Initial release.</releaseNotes>
     <copyright>Copyright 2020</copyright>
     <tags>Rimworld Mod Wiki</tags>
+    <language>C#</language>
 
     <dependencies>
       <group targetFramework="net472">
@@ -23,6 +26,6 @@
 
   <files>
     <file src="lib\**" target="lib/net472"/>
-    <file src="/**" target="Icon.ico"/>
+    <file src="Icon.png" target="" />
   </files>  
 </package>

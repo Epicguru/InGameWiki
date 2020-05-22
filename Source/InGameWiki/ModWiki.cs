@@ -9,6 +9,18 @@ namespace InGameWiki
 {
     public class ModWiki
     {
+        /// <summary>
+        /// The current loaded version of the wiki mod.
+        /// This is the version of the mod API that is loaded. Ideally, it should match the API version downloaded from NuGet.
+        /// </summary>
+        public static string Version
+        {
+            get
+            {
+                return "1.0.0";
+            }
+        }
+
         public static IReadOnlyList<ModWiki> AllWikis
         {
             get
@@ -71,7 +83,7 @@ namespace InGameWiki
             if (canPatch)
             {
                 harmonyInstance.Patch(method, postfix: patch);
-                Log.Message("Patched game for in-game wiki.");
+                Log.Message("<color=cyan>Patched game for in-game wiki.</color>");
             }
         }
 

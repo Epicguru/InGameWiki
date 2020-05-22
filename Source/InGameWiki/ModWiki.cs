@@ -2,13 +2,28 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using InGameWiki.Internal;
 using Verse;
+
+[assembly: InternalsVisibleTo("Mod")]
 
 namespace InGameWiki
 {
     public class ModWiki
     {
+        /// <summary>
+        /// The current loaded version of the wiki mod.
+        /// This is the version of the mod API that is loaded. Ideally, it should match the API version downloaded from NuGet.
+        /// </summary>
+        public static string Version
+        {
+            get
+            {
+                return "1.0.1";
+            }
+        }
+
         public static IReadOnlyList<ModWiki> AllWikis
         {
             get
@@ -18,19 +33,7 @@ namespace InGameWiki
         }
         private static List<ModWiki> allWikis = new List<ModWiki>();
 
-        private static bool hasPatched = false;
-
-        internal static void EnsurePatched()
-        {
-            if (hasPatched)
-                return;
-
-            Harmony instance = new Harmony("co.uk.epicguru.ingamewiki");
-            Patch(instance);
-            hasPatched = true;
-        }
-
-        private static void Patch(Harmony harmonyInstance)
+        internal static void Patch(Harmony harmonyInstance)
         {
             if (harmonyInstance == null)
                 return;
@@ -71,16 +74,27 @@ namespace InGameWiki
             if (canPatch)
             {
                 harmonyInstance.Patch(method, postfix: patch);
-                Log.Message("Patched game for in-game wiki.");
+                Log.Message("<color=cyan>Patched game for in-game wiki.</color>");
             }
         }
 
+        /// <summary>
+        /// Opens an inspector window for the Def provided.
+        /// If Def is null, nothing happens.
+        /// </summary>
+        /// <param name="def">The Def to inspect.</param>
         public static void OpenInspectWindow(Def def)
         {
             if (def != null)
                 Find.WindowStack.Add(new Dialog_InfoCard(def));
         }
 
+        /// <summary>
+        /// Creates and registers a new mod wiki.
+        /// You must pass in your mod instance. Do not call this method more than once per mod!
+        /// </summary>
+        /// <param name="mod">Your mod instance.</param>
+        /// <returns>The newly created ModWiki object, or null if creation failed.</returns>
         public static ModWiki Create(Mod mod)
         {
             if(mod == null)
@@ -95,19 +109,26 @@ namespace InGameWiki
 
             allWikis.Add(wiki);
 
-            EnsurePatched();
+            Log.Message($"<color=cyan>A new wiki was registered for mod '{mod.Content.Name}'.</color>");
 
             return wiki;
         }
 
-        public static (ModWiki wiki, WikiPage page) TryFindPage(Def def)
+        /// <summary>
+        /// Tries to find a wiki page given a def name. This searches all ModWikis.
+        /// Returns the wiki and the page within that wiki.
+        /// See also <see cref="FindPageFromDef(string)"/>.
+        /// </summary>
+        /// <param name="defName">The ThingDef name to search for.</param>
+        /// <returns>A tupple containing the wiki and the wiki page, or <c>(null, null)</c> if the page was not found.</returns>
+        public static (ModWiki wiki, WikiPage page) GlobalFindPageFromDef(string defName)
         {
-            if (def == null)
+            if (defName == null)
                 return (null, null);
 
             foreach (var wiki in AllWikis)
             {
-                var found = wiki.FindPageFromDef(def.defName);
+                var found = wiki.FindPageFromDef(defName);
                 if (found != null)
                     return (wiki, found);
             }
@@ -115,7 +136,14 @@ namespace InGameWiki
             return (null, null);
         }
 
-        public static (ModWiki wiki, WikiPage page) TryFindPage(string pageID)
+        /// <summary>
+        /// Tries to find a wiki page given a page ID. This searches all ModWikis.
+        /// Returns the wiki and the page within that wiki.
+        /// See also <see cref="FindPageFromID(string)"/>.
+        /// </summary>
+        /// <param name="pageID">The page ID, as specified in file, to search for.</param>
+        /// <returns>A tupple containing the wiki and the wiki page, or <c>(null, null)</c> if the page was not found.</returns>
+        public static (ModWiki wiki, WikiPage page) GlobalFindPageFromID(string pageID)
         {
             if (pageID == null)
                 return (null, null);
@@ -130,8 +158,14 @@ namespace InGameWiki
             return (null, null);
         }
 
-        public static void OpenPage(ModWiki wiki, WikiPage page)
+        /// <summary>
+        /// Opens the wiki window to a specific page from a specific wiki.
+        /// </summary>
+        public static void ShowPage(ModWiki wiki, WikiPage page)
         {
+            if (wiki == null || page == null)
+                return;
+
             if (WikiWindow.CurrentActive != null && WikiWindow.CurrentActive.Wiki == wiki)
             {
                 WikiWindow.CurrentActive.CurrentPage = page;
@@ -149,6 +183,14 @@ namespace InGameWiki
         private ModWiki()
         {
 
+        }
+
+        /// <summary>
+        /// Opens this wiki to whatever page was last opened.
+        /// </summary>
+        public void Show()
+        {
+            WikiWindow.Open(this);
         }
 
         private void GenerateFromMod(Mod mod)
@@ -170,6 +212,13 @@ namespace InGameWiki
             PageParser.AddAllFromDirectory(this, dir);
         }
 
+        /// <summary>
+        /// A method that should be overriden to decide weather pages will be generated
+        /// for the ThingDefs added by a mod. The default implementation filters out blueprints, projectiles, turret guns, motes etc.
+        /// Return true to generate page from the ThingDef, false to ignore the ThingDef.
+        /// </summary>
+        /// <param name="def">The ThingDef that a page might be created for.</param>
+        /// <returns>True to generate a page, false to not generate page.</returns>
         public virtual bool AutogenPageFilter(ThingDef def)
         {
             if (def == null)
@@ -187,9 +236,18 @@ namespace InGameWiki
             if (def.weaponTags?.Contains("TurretGun") ?? false)
                 return false;
 
+            if (def.mote != null)
+                return false;
+
             return true;
         }
 
+        /// <summary>
+        /// Finds a page from this wiki given the def name of the Thing that the page is about.
+        /// For example, if your mod adds Gun_MySuperGun, then you could access it's wiki page by calling <c>FindPageFromDef("Gun_MySuperGun")</c>.
+        /// </summary>
+        /// <param name="defName">The name of the definition.</param>
+        /// <returns>The wiki page if found, or null.</returns>
         public WikiPage FindPageFromDef(string defName)
         {
             if (defName == null)
@@ -203,6 +261,12 @@ namespace InGameWiki
             return null;
         }
 
+        /// <summary>
+        /// Finds a page from this wiki given the page ID. This will only return 'custom' pages, not auto-generated pages for ThingDefs.
+        /// See <see cref="FindPageFromDef(string)"/>.
+        /// </summary>
+        /// <param name="pageID">The page ID as specified in file.</param>
+        /// <returns>The wiki page if found, or null.</returns>
         public WikiPage FindPageFromID(string pageID)
         {
             if (pageID == null)

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("In-Game Wiki")]
-[assembly: AssemblyDescription("Library to add support for the in-game wiki mod.")]
+[assembly: AssemblyTitle("ExampleWiki")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Epicguru")]
-[assembly: AssemblyProduct("InGameWiki")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("ExampleWiki")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("9e96b31e-ce63-40dc-a696-78622f098618")]
+[assembly: Guid("b72e4b28-1939-417f-b8f2-131a7d932eed")]
 
 // Version information for an assembly consists of the following four values:
 //

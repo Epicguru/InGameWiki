@@ -87,7 +87,8 @@ namespace InGameWiki
                         continue;
                 }
 
-                Widgets.DrawTextureFitted(new Rect(pagesArea.x + 4, pagesArea.y + 4 + lastHeight + 5, 24, 24), page.Icon, 1f);
+                if(page.Icon != null)
+                    Widgets.DrawTextureFitted(new Rect(pagesArea.x + 4, pagesArea.y + 4 + lastHeight + 5, 24, 24), page.Icon, 1f);
                 bool clicked = Widgets.ButtonText(new Rect(pagesArea.x + 28, pagesArea.y + 4 + lastHeight, pagesArea.width - 28 - 4, 40), page.Title);
                 if (clicked)
                 {

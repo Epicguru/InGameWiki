@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using InGameWiki.Internal;
 using Verse;
+
+[assembly: InternalsVisibleTo("Mod")]
 
 namespace InGameWiki
 {
@@ -17,7 +20,7 @@ namespace InGameWiki
         {
             get
             {
-                return "1.0.0";
+                return "1.0.1";
             }
         }
 
@@ -30,19 +33,7 @@ namespace InGameWiki
         }
         private static List<ModWiki> allWikis = new List<ModWiki>();
 
-        private static bool hasPatched = false;
-
-        internal static void EnsurePatched()
-        {
-            if (hasPatched)
-                return;
-
-            Harmony instance = new Harmony("co.uk.epicguru.ingamewiki");
-            Patch(instance);
-            hasPatched = true;
-        }
-
-        private static void Patch(Harmony harmonyInstance)
+        internal static void Patch(Harmony harmonyInstance)
         {
             if (harmonyInstance == null)
                 return;
@@ -118,7 +109,7 @@ namespace InGameWiki
 
             allWikis.Add(wiki);
 
-            EnsurePatched();
+            Log.Message($"<color=cyan>A new wiki was registered for mod '{mod.Content.Name}'.</color>");
 
             return wiki;
         }

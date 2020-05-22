@@ -22,6 +22,6 @@ Should be loaded immediately after Harmony and before any mods that add in-game 
     </li>
   </modDependencies>
   <loadAfter>
-      <li>brrainz.harmony</li>
+    <li>brrainz.harmony</li>
   </loadAfter>
 </ModMetaData>

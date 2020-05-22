@@ -1,4 +1,5 @@
-﻿using InGameWiki;
+﻿using HarmonyLib;
+using InGameWiki;
 using Verse;
 
 namespace InGameWikiMod
@@ -7,7 +8,9 @@ namespace InGameWikiMod
     {
         public ModCore(ModContentPack content) : base(content)
         {
-            Log.Message($"<color=cyan>Loaded in-game wiki mod: Version {ModWiki.Version}</color>");
+            Harmony harmony = new Harmony("co.uk.epicguru.ingamewiki");
+            ModWiki.Patch(harmony);
+            Log.Message($"<color=cyan>Finished loading in-game wiki mod: Version {ModWiki.Version}</color>");
         }
     }
 }

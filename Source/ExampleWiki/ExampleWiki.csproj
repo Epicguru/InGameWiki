@@ -61,7 +61,6 @@
     <ProjectReference Include="..\InGameWiki\InGameWiki.csproj">
       <Project>{9e96b31e-ce63-40dc-a696-78622f098618}</Project>
       <Name>InGameWiki</Name>
-      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,3 +5,5 @@
 4. Select the package (author: Epicguru) and select Install.
 5. Package should now be installed. Under references, click on InGameWiki and find the properties tab.
 6. Change Copy Local from True to False.
+
+WIP documentation.

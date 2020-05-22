@@ -20,5 +20,8 @@ Should be loaded immediately after Harmony and before any mods that add in-game 
         <steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
         <downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
     </li>
-</modDependencies>
+  </modDependencies>
+  <loadAfter>
+      <li>brrainz.harmony</li>
+  </loadAfter>
 </ModMetaData>

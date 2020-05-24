@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+<Wiki.Show>show</Wiki.Show>
+<Wiki.Hide>hide</Wiki.Hide>
+<Wiki.Link>Link</Wiki.Link>
+<Wiki.LinkBroken>Link (broken, please report)</Wiki.LinkBroken>
+
+<!-- Autogen stuff -->
+<Wiki.Cost>Cost</Wiki.Cost>
+<Wiki.CraftedAt>Crafted at</Wiki.CraftedAt>
+<Wiki.ResearchToUnlock>Research to unlock</Wiki.ResearchToUnlock>
+
+<!-- Misc -->
+<Wiki.OpenWikiPage>Open wiki page</Wiki.OpenWikiPage>
+
+ </LanguageData>

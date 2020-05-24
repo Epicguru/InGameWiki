@@ -20,7 +20,7 @@ namespace InGameWiki.Internal
             if (page == null)
                 return;
 
-            if (Widgets.ButtonText(new Rect(inRect.x + inRect.width * 0.5f + 6, inRect.y + 24, 180, 36), "Open wiki page"))
+            if (Widgets.ButtonText(new Rect(inRect.x + inRect.width * 0.5f + 6, inRect.y + 24, 180, 36), "Wiki.OpenWikiPage".Translate()))
             {
                 __instance.Close(true);
                 ModWiki.ShowPage(wiki, page);

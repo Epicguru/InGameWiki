@@ -9,12 +9,60 @@ namespace InGameWiki
 {
     public static class PageParser
     {
-        public static void AddAllFromDirectory(ModWiki wiki, string dir)
+        /// <summary>
+        /// Generates wiki pages from the .txt files supplied by the mod inside it's Wiki folder.
+        /// Uses the currently active language where possible, or defaults to English.
+        /// </summary>
+        /// <param name="wiki">The mod wiki to generate the files for.</param>
+        /// <param name="dir">The Wiki directory to find files in.</param>
+        /// <returns>The name of the language used, or null if loading failed.</returns>
+        public static string AddAllFromDirectory(ModWiki wiki, string dir)
         {
             if (wiki == null)
-                return;
+                return null;
             if (!Directory.Exists(dir))
-                return;
+                return null;
+
+            Log.Message($"LanguageDatabase.activeLanguage: {LanguageDatabase.activeLanguage}");
+            var activeLang = LanguageDatabase.activeLanguage;
+            string langName = activeLang.folderName;
+            string defaultLangName = LanguageDatabase.DefaultLangFolderName;
+
+            bool hasActiveLanguage = Directory.Exists(Path.Combine(dir, langName));
+            if (!hasActiveLanguage)
+            {
+                string modName = wiki.Mod?.Content?.Name ?? "UKN";
+                Log.Warning($"Mod {modName} has a wiki folder, but does not support language '{langName}'. {(langName == defaultLangName ? "Falling back to first found." : $"Falling back to '{defaultLangName}', or first found.")} ");
+                // Look for default (english) language.
+                hasActiveLanguage = Directory.Exists(Path.Combine(dir, defaultLangName));
+
+                if (hasActiveLanguage)
+                {
+                    // English found. Use it.
+                    dir = Path.Combine(dir, defaultLangName);
+                    Log.Warning($"Using {defaultLangName}.");
+                }
+                else
+                {
+                    // Okay, mod doesn't have native language and also doesn't have english. Look for any language at all.
+                    var folders = Directory.GetDirectories(dir, "", SearchOption.TopDirectoryOnly);
+                    if (folders.Length == 0)
+                    {
+                        Log.Warning($"Mod {modName} has wiki folder, but no languages. The folder structure should be 'ModName/Wiki/LanguageName/'.");
+                    }
+                    else
+                    {
+                        // Just go with the first one.
+                        dir = folders[0];
+                        Log.Warning($"Failed to find wiki in '{defaultLangName}', using first found: '{new DirectoryInfo(dir).Name}'.");
+                    }
+                }
+            }
+            else
+            {
+                // This mod has support for the native language! Nice!
+                dir = Path.Combine(dir, langName);
+            }
 
             var files = Directory.GetFiles(dir, "*.txt", SearchOption.AllDirectories).ToList();
 
@@ -57,6 +105,8 @@ namespace InGameWiki
                 //Log.Message("Added " + file);
                 wiki.Pages.Insert(0, page);
             }
+
+            return new DirectoryInfo(dir).Name;
         }
 
         public static WikiPage Parse(string rawText, WikiPage existing)

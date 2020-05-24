@@ -25,7 +25,7 @@ namespace InGameWiki
             if(thing.costList != null)
             {
                 var cost = new SectionWikiElement();
-                cost.Name = "Cost";
+                cost.Name = "Wiki.Cost".Translate();
 
                 foreach (var costThing in thing.costList)
                 {
@@ -47,7 +47,7 @@ namespace InGameWiki
             if (thing.recipeMaker != null)
             {
                 var crafting = new SectionWikiElement();
-                crafting.Name = "Crafted at";
+                crafting.Name = "Wiki.CraftedAt".Translate();
 
                 foreach (var user in thing.recipeMaker.recipeUsers)
                 {
@@ -64,7 +64,7 @@ namespace InGameWiki
             if (thing.researchPrerequisites != null && thing.researchPrerequisites.Count > 0)
             {
                 var research = new SectionWikiElement();
-                research.Name = "Research to unlock";
+                research.Name = "Wiki.ResearchToUnlock".Translate();
 
                 foreach (var r in thing.researchPrerequisites)
                 {

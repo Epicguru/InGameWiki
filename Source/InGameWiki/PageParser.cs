@@ -23,7 +23,6 @@ namespace InGameWiki
             if (!Directory.Exists(dir))
                 return null;
 
-            Log.Message($"LanguageDatabase.activeLanguage: {LanguageDatabase.activeLanguage}");
             var activeLang = LanguageDatabase.activeLanguage;
             string langName = activeLang.folderName;
             string defaultLangName = LanguageDatabase.DefaultLangFolderName;

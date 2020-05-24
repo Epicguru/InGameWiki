@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using InGameWiki.Internal;
 using Verse;
 
-[assembly: InternalsVisibleTo("Mod")]
+[assembly: InternalsVisibleTo("InGameWikiMod")]
 
 namespace InGameWiki
 {

@@ -130,7 +130,7 @@ namespace InGameWiki
                     }
                 }
 
-                string linkText = IsLinkBroken ? $"<color=#ff2b2b><b><i>Link (broken, please report): [{PageLink}]</i></b></color>" : $"<color=#9c9c9c><b><i>Link:</i></b></color>{PageLinkReal.page?.Title}";
+                string linkText = IsLinkBroken ? $"<color=#ff2b2b><b><i>{"Wiki.LinkBroken".Translate()}: [{PageLink}]</i></b></color>" : $"<color=#9c9c9c><b><i>{"Wiki.Link".Translate()}:</i></b></color>{PageLinkReal.page?.Title}";
                 string txt = isLink ? linkText : Text;
 
                 Widgets.LongLabel(x, width, txt, ref startY);

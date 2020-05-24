@@ -2,7 +2,7 @@
 <Defs>
 
     <MainButtonDef>
-        <defName>Wiki</defName>
+        <defName>WikiButton</defName>
         <label>wiki</label>
         <description>View mod wiki pages.</description>
         <tabWindowClass>InGameWikiMod.MainButtonUI</tabWindowClass>

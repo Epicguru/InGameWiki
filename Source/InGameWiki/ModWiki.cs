@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -6,7 +7,7 @@ using System.Runtime.CompilerServices;
 using InGameWiki.Internal;
 using Verse;
 
-[assembly: InternalsVisibleTo("Mod")]
+[assembly: InternalsVisibleTo("InGameWikiMod")]
 
 namespace InGameWiki
 {
@@ -20,7 +21,7 @@ namespace InGameWiki
         {
             get
             {
-                return "1.0.1";
+                return "1.1.0";
             }
         }
 
@@ -103,15 +104,23 @@ namespace InGameWiki
                 return null;
             }
 
-            var wiki = new ModWiki();
-            wiki.GenerateFromMod(mod);
-            wiki.Mod = mod;
+            try
+            {
+                var wiki = new ModWiki();
+                wiki.Mod = mod;
+                wiki.GenerateFromMod(mod);
 
-            allWikis.Add(wiki);
+                allWikis.Add(wiki);
 
-            Log.Message($"<color=cyan>A new wiki was registered for mod '{mod.Content.Name}'.</color>");
+                Log.Message($"<color=cyan>A new wiki was registered for mod '{mod.Content.Name}'.</color>");
 
-            return wiki;
+                return wiki;
+            }
+            catch(Exception e)
+            {
+                Log.Error($"Exception creating wiki for {mod.Content.Name}: {e}");
+                return null;
+            }
         }
 
         /// <summary>

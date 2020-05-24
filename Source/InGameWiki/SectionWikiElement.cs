@@ -17,13 +17,15 @@ namespace InGameWiki
             Vector2 size = Vector2.zero;
 
             Verse.Text.Font = GameFont.Medium;
-            if (Widgets.ButtonText(new Rect(maxBounds.x, maxBounds.y, 65, 32), $"{(Hidden ? "Show" : "Hide")}"))
+            string txt = Hidden ? "Wiki.Show".Translate().CapitalizeFirst() : "Wiki.Hide".Translate().CapitalizeFirst();
+            float width = Verse.Text.CalcSize(txt).x + 16;
+            if (Widgets.ButtonText(new Rect(maxBounds.x, maxBounds.y, width, 32), txt))
             {
                 Hidden = !Hidden;
             }
             if (Name != null)
             {
-                Widgets.Label(new Rect(maxBounds.x + 70, maxBounds.y, maxBounds.width - 70, 40), Name);
+                Widgets.Label(new Rect(maxBounds.x + width + 5, maxBounds.y, maxBounds.width - width - 5, 40), Name);
             }
             Verse.Text.Font = GameFont.Small;
 

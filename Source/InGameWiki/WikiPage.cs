@@ -1,6 +1,6 @@
-﻿using System;
+﻿using InGameWiki.Internal;
+using System;
 using System.Collections.Generic;
-using InGameWiki.Internal;
 using UnityEngine;
 using Verse;
 
@@ -61,18 +61,31 @@ namespace InGameWiki
             }
 
             // Research prerequisite.
-            if (thing.researchPrerequisites != null && thing.researchPrerequisites.Count > 0)
+            var research = new SectionWikiElement();
+            research.Name = "Wiki.ResearchToUnlock".Translate();
+            if (thing.researchPrerequisites != null && thing.researchPrerequisites.Count > 0) // Generally buildings.
             {
-                var research = new SectionWikiElement();
-                research.Name = "Wiki.ResearchToUnlock".Translate();
-
                 foreach (var r in thing.researchPrerequisites)
                 {
                     research.Elements.Add(new WikiElement() {Text = r.LabelCap});
                 }
 
-                p.Elements.Add(research);
             }
+            if (thing.recipeMaker?.researchPrerequisites != null) // Generally craftable items.
+            {
+                foreach (var r in thing.recipeMaker.researchPrerequisites)
+                {
+                    research.Elements.Add(new WikiElement() { Text = r.LabelCap });
+                }
+            }
+            if (thing.recipeMaker?.researchPrerequisite != null) // Generally craftable items.
+            {
+                var r = thing.recipeMaker.researchPrerequisite;
+                research.Elements.Add(new WikiElement() { Text = r.LabelCap });
+            }
+
+            if (research.Elements.Count > 0)
+                p.Elements.Add(research);
 
             if (DebugMode)
             {
@@ -88,6 +101,68 @@ namespace InGameWiki
             p.Def = thing;
 
             return p;
+        }
+
+        public virtual bool IsSpoiler
+        {
+            get
+            {
+                if (!ModWiki.NoSpoilerMode)
+                    return false;
+
+                // If the research hasn't been done, it's a spoiler.
+                if (!IsResearchFinished)
+                    return true;
+
+                return false;
+            }
+        }
+
+        public virtual bool IsResearchFinished
+        {
+            get
+            {
+                if (Def == null)
+                    return true;
+
+                if (!(Def is ThingDef td))
+                    return true;
+
+                // This only works for buildings. For craftable items, I also need to check recipe makers for research.
+                if (td.researchPrerequisites != null)
+                {
+                    return td.IsResearchFinished;
+                }
+
+                // This works for craftable items.
+                if (td.recipeMaker != null)
+                {
+                    bool singleDone = true;
+                    if (td.recipeMaker.researchPrerequisite != null)
+                    {
+                        singleDone = td.recipeMaker.researchPrerequisite.IsFinished;
+                    }
+                    if (!singleDone)
+                        return false;
+
+                    bool allDone = true;
+                    if (td.recipeMaker.researchPrerequisites != null)
+                    {
+                        foreach (var rec in td.recipeMaker.researchPrerequisites)
+                        {
+                            if (!rec.IsFinished)
+                            {
+                                allDone = false;
+                                break;
+                            }
+                        }
+                    }
+                    return allDone;
+                }
+
+                // Looks like this Thing has no research requirements.
+                return true;
+            }
         }
 
         /// <summary>
@@ -138,7 +213,12 @@ namespace InGameWiki
                 Text.Font = GameFont.Medium;
                 float x = !drawnIcon ? maxBounds.x + PADDING : maxBounds.x + PADDING + 128 + PADDING;
                 float w = !drawnIcon ? maxBounds.width - PADDING * 2 : maxBounds.width - PADDING * 2 - 128;
-                Widgets.Label(new Rect(x, maxBounds.y + PADDING, w, 34), Title);
+                string toDraw = Title;
+                if (IsSpoiler)
+                {
+                    toDraw += $" <color=#FF6D71><i>[{"Wiki.Spoiler".Translate().CapitalizeFirst()}]</i></color>";
+                }
+                Widgets.Label(new Rect(x, maxBounds.y + PADDING, w, 34), toDraw);
             }
 
             // Short description.

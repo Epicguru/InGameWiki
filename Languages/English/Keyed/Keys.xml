@@ -5,6 +5,9 @@
 <Wiki.Hide>hide</Wiki.Hide>
 <Wiki.Link>Link</Wiki.Link>
 <Wiki.LinkBroken>Link (broken, please report)</Wiki.LinkBroken>
+<Wiki.Spoiler>spoiler</Wiki.Spoiler>
+<Wiki.HiddenWarning>{0} pages are hidden due to spoiler settings.</Wiki.HiddenWarning>
+<Wiki.HideSpoilerMode>Hide spoilers: </Wiki.HideSpoilerMode>
 
 <!-- Autogen stuff -->
 <Wiki.Cost>Cost</Wiki.Cost>

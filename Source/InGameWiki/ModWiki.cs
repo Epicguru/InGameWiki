@@ -21,10 +21,11 @@ namespace InGameWiki
         {
             get
             {
-                return "1.1.0";
+                return "1.2.0";
             }
         }
 
+        public static bool NoSpoilerMode { get; set; } = true;
         public static IReadOnlyList<ModWiki> AllWikis
         {
             get
@@ -223,7 +224,7 @@ namespace InGameWiki
 
         /// <summary>
         /// A method that should be overriden to decide weather pages will be generated
-        /// for the ThingDefs added by a mod. The default implementation filters out blueprints, projectiles, turret guns, motes etc.
+        /// for the ThingDefs added by a mod. The default implementation filters out blueprints, projectiles, turret guns, motes, ethereal, etc.
         /// Return true to generate page from the ThingDef, false to ignore the ThingDef.
         /// </summary>
         /// <param name="def">The ThingDef that a page might be created for.</param>
@@ -246,6 +247,10 @@ namespace InGameWiki
                 return false;
 
             if (def.mote != null)
+                return false;
+
+            var cat = def.category;
+            if (cat == ThingCategory.Ethereal || cat == ThingCategory.Filth)
                 return false;
 
             return true;

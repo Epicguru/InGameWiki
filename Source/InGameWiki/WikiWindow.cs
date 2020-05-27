@@ -75,6 +75,7 @@ namespace InGameWiki
             string searchString = SearchText?.Trim().ToLowerInvariant();
             bool isSearching = !string.IsNullOrEmpty(searchString);
 
+            int hiddenCount = 0;
             foreach (var page in Wiki.Pages)
             {
                 if (page == null)
@@ -85,6 +86,12 @@ namespace InGameWiki
                     string pageName = page.Title.Trim().ToLowerInvariant();
                     if (!pageName.Contains(searchString))
                         continue;
+                }
+
+                if (page.IsSpoiler)
+                {
+                    hiddenCount++;
+                    continue;
                 }
 
                 if(page.Icon != null)
@@ -98,10 +105,24 @@ namespace InGameWiki
                 lastHeight += 32 + 5;
             }
 
+            if (hiddenCount > 0)
+            {
+                string text = $"<color=#FF6D71><i>{"Wiki.HiddenWarning".Translate(hiddenCount)}</i></color>";
+                Widgets.Label(new Rect(pagesArea.x + 4, pagesArea.y + 4 + lastHeight, pagesArea.width - 4, 50), text);
+                lastHeight += 42 + 5;
+            }
+
             Widgets.EndScrollView();
 
             // Current page.
             CurrentPage?.Draw(contentArea);
+
+            // Spoiler mode toggle.
+            bool spoilerMode = ModWiki.NoSpoilerMode;
+            string txt = "Wiki.HideSpoilerMode".Translate();
+            float width = Text.CalcSize(txt).x + 24;
+            Widgets.CheckboxLabeled(new Rect(maxBounds.x + 5, maxBounds.yMax - 32, width, 32), txt, ref spoilerMode);
+            ModWiki.NoSpoilerMode = spoilerMode;
         }
 
         public override void PreClose()

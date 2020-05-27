@@ -5,6 +5,9 @@
 <Wiki.Hide>esconder</Wiki.Hide>
 <Wiki.Link>Link</Wiki.Link>
 <Wiki.LinkBroken>Link (roto, avise al autor)</Wiki.LinkBroken>
+<Wiki.Spoiler>espóiler</Wiki.Spoiler> <!-- Aunque no sea lo más correcto, creo que se entiende bien. -->
+<Wiki.HiddenWarning>{0} páginas han sido escondidas para evitar espóilers.</Wiki.HiddenWarning>
+<Wiki.HideSpoilerMode>Esconder espóilers: </Wiki.HideSpoilerMode>
 
 <!-- Autogen stuff -->
 <Wiki.Cost>Coste</Wiki.Cost>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,8 @@ namespace InGameWiki
 {
     public static class PageParser
     {
+        private static Dictionary<string, string> pageTags = new Dictionary<string, string>();
+
         /// <summary>
         /// Generates wiki pages from the .txt files supplied by the mod inside it's Wiki folder.
         /// Uses the currently active language where possible, or defaults to English.
@@ -108,48 +111,108 @@ namespace InGameWiki
             return new DirectoryInfo(dir).Name;
         }
 
+        private static string TryGetTag(string tag, string ifNotFound = null)
+        {
+            return pageTags.TryGetValue(tag, out string found) ? found : ifNotFound;
+        }
+
         public static WikiPage Parse(string rawText, WikiPage existing)
         {
             string[] lines = rawText.Split('\n');
 
-            if (existing == null && lines.Length < 5)
+            // Load up tags.
+            pageTags.Clear();
+            const string ENDTAGS = "ENDTAGS";
+            int metaEndLine = -1;
+            for (int i = 0; i < lines.Length; i++)
             {
-                Log.Error("Expected minimum 5 lines for ID, title, icon, background and description.");
-                return null;
+                string line = lines[i].Trim();
+                if (line == ENDTAGS)
+                {
+                    metaEndLine = i;
+                    break;
+                }
             }
-            if (existing != null && lines.Length < 1)
+            if (metaEndLine == -1)
             {
-                Log.Error($"Expected minimum 1 lines for background when appending to Thing {existing.Def.defName}");
-                return null;
+                // This is only allowed if this is not an external page.
+                if (existing == null)
+                {
+                    Log.Error("External wiki page does not have an ENDTAGS line.\nExternal pages need to have the following format:\n\nTAG:Data\nOTHERTAG:Other Data\nENDTAGS\n... Page data below ...\n\nRaw page:\n" + rawText);
+                    return null;
+                }
+            }
+            if (metaEndLine != -1)
+            {
+                for (int i = 0; i < metaEndLine; i++)
+                {
+                    string line = lines[i];
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    if (!line.Contains(':'))
+                    {
+                        Log.Error($"External wiki page tag error, line {i + 1}: incorrect format. Expected 'TAG:Data', got '{line.Trim()}'.\nRaw file:\n{rawText}");
+                        continue;
+                    }
+
+                    var parts = line.Split(':');
+                    string tag = parts[0];
+                    if (string.IsNullOrWhiteSpace(tag))
+                    {
+                        Log.Error($"External wiki page tag error, line {i + 1}: blank tag.\nRaw file:\n{rawText}");
+                        continue;
+                    }
+                    if (pageTags.ContainsKey(tag))
+                    {
+                        Log.Error($"External wiki page tag error, line {i + 1}: duplicate tag '{tag}'.\nRaw file:\n{rawText}");
+                        continue;
+                    }
+                    pageTags.Add(tag, parts[1].Trim());
+                }
             }
 
             WikiPage p = existing ?? new WikiPage();
             if (existing == null)
             {
-                string id = string.IsNullOrWhiteSpace(lines[0].Trim()) ? null : lines[0].Trim();
-                string title = string.IsNullOrWhiteSpace(lines[1].Trim()) ? null : lines[1].Trim();
-                Texture2D icon = ContentFinder<Texture2D>.Get(lines[2].Trim(), false);
-                Texture2D bg = ContentFinder<Texture2D>.Get(lines[3].Trim(), false);
-                string desc = string.IsNullOrWhiteSpace(lines[4].Trim()) ? null : lines[4].Trim();
+                const string INVALID_ID = "INVALID_ID_ERROR";
+                string id = TryGetTag("ID", INVALID_ID);
+                string title = TryGetTag("Title", "<No title specified>");
+                Texture2D icon = ContentFinder<Texture2D>.Get(TryGetTag("Icon", ""), false);
+                Texture2D bg = ContentFinder<Texture2D>.Get(TryGetTag("Background", ""), false);
+                string requiredResearch = TryGetTag("RequiredResearch", "");
+                string desc = TryGetTag("Description", "");
+                bool alwaysSpoiler = TryGetTag("AlwaysSpoiler", "false") != "false";
 
-                if (id == null)
-                    Log.Warning($"External wiki page with title {title} has a null ID. It may break things.");
+                if (id == INVALID_ID)
+                    Log.Warning($"External wiki page with title {title} does not have an ID tag. It should specify 'ID: MyPageID'. It may break things.");
 
                 p.ID = id;
                 p.Title = title;
                 p.Icon = icon;
                 p.ShortDescription = desc;
                 p.Background = bg;
+                if (requiredResearch != string.Empty)
+                    p.RequiresResearchRaw = requiredResearch;
+                if (alwaysSpoiler)
+                    p.IsAlwaysSpoiler = true;
             }
             else
             {
-                Texture2D bg = ContentFinder<Texture2D>.Get(lines[0].Trim(), false);
+                Texture2D bg = ContentFinder<Texture2D>.Get(TryGetTag("Background", ""), false);
+                string requiredResearch = TryGetTag("RequiredResearch", "");
+                bool alwaysSpoiler = TryGetTag("AlwaysSpoiler", "false") != "false";
+
                 p.Background = bg;
+                if (requiredResearch != string.Empty)
+                    p.RequiresResearchRaw = requiredResearch;
+                if (alwaysSpoiler)
+                    p.IsAlwaysSpoiler = true;
             }
 
             StringBuilder str = new StringBuilder();
             CurrentlyParsing parsing = CurrentlyParsing.None;
-            for (int i = (existing == null ? 5 : 1); i < lines.Length; i++)
+            for (int i = metaEndLine + 1; i < lines.Length; i++)
             {
                 string line = lines[i];
                 line += '\n';
@@ -295,7 +358,7 @@ namespace InGameWiki
                 else
                 {
                     // Invalid.
-                    Log.Error($"Error parsing wiki on line {i + 1}: got '{c}' which is invalid since {currentParsing} is currently active.");
+                    Log.Error($"Error parsing wiki on line {i + 1}: got '{c}' which is invalid since {currentParsing} is currently active. Raw page:\n{rawText}");
                     return null;
                 }
             }

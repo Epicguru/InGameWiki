@@ -97,10 +97,28 @@ namespace InGameWiki
             {
                 //TooltipHandler.TipRegion(rect, (TipSignal)def.description);
                 var rect = new Rect(maxBounds.x, maxBounds.y, 200, 32);
-                Widgets.DefLabelWithIcon(rect, DefForIconAndLabel);
-                if (Widgets.ButtonInvisible(rect, true))
+                bool isSpoiler = false;
+                var pair = ModWiki.GlobalFindPageFromDef(DefForIconAndLabel.defName);
+                if (pair.page != null)
                 {
-                    WikiWindow.CurrentActive?.GoToPage(this.DefForIconAndLabel, true);
+                    isSpoiler = pair.page.IsSpoiler;
+                }
+
+                if (!isSpoiler || Input.GetKey(KeyCode.LeftShift))
+                {
+                    Widgets.DefLabelWithIcon(rect, DefForIconAndLabel);
+                }
+                else
+                {
+                    Widgets.DrawBoxSolid(rect, Color.red);
+                    Widgets.Label(rect, '[' + "Wiki.Spoiler".Translate().CapitalizeFirst() + "]");
+                }
+                if (Widgets.ButtonInvisible(rect, true) && (!isSpoiler || Input.GetKey(KeyCode.LeftShift)))
+                {
+                    if (pair.page != null)
+                    {
+                        ModWiki.ShowPage(pair.wiki, pair.page);
+                    }
                 }
                 size.y += 32;
                 imageOffset.x = 200;

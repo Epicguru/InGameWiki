@@ -110,6 +110,9 @@ namespace InGameWiki
                 if (!ModWiki.NoSpoilerMode)
                     return false;
 
+                if (IsAlwaysSpoiler)
+                    return true;
+
                 // Check custom research tag.
                 if (RequiresResearchRaw != null)
                 {
@@ -194,6 +197,7 @@ namespace InGameWiki
         public Texture2D Icon;
         public Texture2D Background;
         public Def Def;
+        public bool IsAlwaysSpoiler;
 
         public List<WikiElement> Elements = new List<WikiElement>();
 

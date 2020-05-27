@@ -182,9 +182,10 @@ namespace InGameWiki
                 Texture2D bg = ContentFinder<Texture2D>.Get(TryGetTag("Background", ""), false);
                 string requiredResearch = TryGetTag("RequiredResearch", "");
                 string desc = TryGetTag("Description", "");
+                bool alwaysSpoiler = TryGetTag("AlwaysSpoiler", "false") != "false";
 
                 if (id == INVALID_ID)
-                    Log.Warning($"External wiki page with title {title} does not have an ID tag. It should specify 'ID: MyPageName'. It may break things.");
+                    Log.Warning($"External wiki page with title {title} does not have an ID tag. It should specify 'ID: MyPageID'. It may break things.");
 
                 p.ID = id;
                 p.Title = title;
@@ -193,20 +194,25 @@ namespace InGameWiki
                 p.Background = bg;
                 if (requiredResearch != string.Empty)
                     p.RequiresResearchRaw = requiredResearch;
+                if (alwaysSpoiler)
+                    p.IsAlwaysSpoiler = true;
             }
             else
             {
                 Texture2D bg = ContentFinder<Texture2D>.Get(TryGetTag("Background", ""), false);
                 string requiredResearch = TryGetTag("RequiredResearch", "");
+                bool alwaysSpoiler = TryGetTag("AlwaysSpoiler", "false") != "false";
 
                 p.Background = bg;
                 if (requiredResearch != string.Empty)
                     p.RequiresResearchRaw = requiredResearch;
+                if (alwaysSpoiler)
+                    p.IsAlwaysSpoiler = true;
             }
 
             StringBuilder str = new StringBuilder();
             CurrentlyParsing parsing = CurrentlyParsing.None;
-            for (int i = (existing == null ? 5 : 1); i < lines.Length; i++)
+            for (int i = metaEndLine + 1; i < lines.Length; i++)
             {
                 string line = lines[i];
                 line += '\n';
@@ -352,7 +358,7 @@ namespace InGameWiki
                 else
                 {
                     // Invalid.
-                    Log.Error($"Error parsing wiki on line {i + 1}: got '{c}' which is invalid since {currentParsing} is currently active.");
+                    Log.Error($"Error parsing wiki on line {i + 1}: got '{c}' which is invalid since {currentParsing} is currently active. Raw page:\n{rawText}");
                     return null;
                 }
             }

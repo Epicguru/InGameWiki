@@ -103,17 +103,20 @@ namespace InGameWiki
                 {
                     isSpoiler = pair.page.IsSpoiler;
                 }
+                bool overrideSpoilers = Input.GetKey(KeyCode.LeftControl);
 
-                if (!isSpoiler || Input.GetKey(KeyCode.LeftShift))
+                if (!isSpoiler || overrideSpoilers)
                 {
                     Widgets.DefLabelWithIcon(rect, DefForIconAndLabel);
                 }
                 else
                 {
-                    Widgets.DrawBoxSolid(rect, Color.red);
-                    Widgets.Label(rect, '[' + "Wiki.Spoiler".Translate().CapitalizeFirst() + "]");
+                    Widgets.DrawBoxSolid(rect, new Color(1f, 89f / 255f, 136f / 255f, 0.4f));
+                    string spoilerText = "<i>[" + "Wiki.Spoiler".Translate().CapitalizeFirst() + "]</i>";
+                    var spoilerTextSize = Verse.Text.CalcSize(spoilerText);
+                    Widgets.Label(new Rect(rect.x + (rect.width - spoilerTextSize.x) * 0.5f, rect.y + (rect.height - spoilerTextSize.y) * 0.5f, spoilerTextSize.x, spoilerTextSize.y), spoilerText);
                 }
-                if (Widgets.ButtonInvisible(rect, true) && (!isSpoiler || Input.GetKey(KeyCode.LeftShift)))
+                if (Widgets.ButtonInvisible(rect, true) && (!isSpoiler || overrideSpoilers))
                 {
                     if (pair.page != null)
                     {

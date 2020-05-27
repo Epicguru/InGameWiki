@@ -1,7 +1,7 @@
-TestPage_ExampleWiki
-TestPage (Castellano)
+ID: TestPage_ExampleWiki
+Title: PaginaTest
 
-
+ENDTAGS
 
 #!Bla bla castellano tortilla etc!#
 

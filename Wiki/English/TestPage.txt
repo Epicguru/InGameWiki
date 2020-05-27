@@ -1,7 +1,7 @@
-TestPage_ExampleWiki
-TestPage
+ID: TestPage_ExampleWiki
+Title: TestPage
 
-
+ENDTAGS
 
 #!This is an example page!#
 

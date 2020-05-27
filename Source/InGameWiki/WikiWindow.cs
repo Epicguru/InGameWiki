@@ -119,7 +119,7 @@ namespace InGameWiki
 
             // Spoiler mode toggle.
             bool spoilerMode = ModWiki.NoSpoilerMode;
-            Widgets.CheckboxLabeled(new Rect(windowRect.yMax - 50, windowRect.x + 5, 400, 50), "Wiki.HideSpoilerMode".Translate(), ref spoilerMode);
+            Widgets.CheckboxLabeled(new Rect(maxBounds.x + 5, maxBounds.yMax - 50, 400, 50), "Wiki.HideSpoilerMode".Translate(), ref spoilerMode);
             ModWiki.NoSpoilerMode = spoilerMode;
         }
 

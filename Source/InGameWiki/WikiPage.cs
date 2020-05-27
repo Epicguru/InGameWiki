@@ -110,6 +110,25 @@ namespace InGameWiki
                 if (!ModWiki.NoSpoilerMode)
                     return false;
 
+                // Check custom research tag.
+                if (RequiresResearchRaw != null)
+                {
+                    if (requiresResearch == null)
+                    {
+                        requiresResearch = ResearchProjectDef.Named(RequiresResearchRaw);
+                        if (requiresResearch == null)
+                        {
+                            Log.Error($"Failed to find required research for page {ID} ({Title}): '{RequiresResearchRaw}'");
+                            RequiresResearchRaw = null;
+                        }
+                    }
+                    if (requiresResearch != null)
+                    {
+                        if (!requiresResearch.IsFinished)
+                            return true;
+                    }
+                }
+
                 // If the research hasn't been done, it's a spoiler.
                 if (!IsResearchFinished)
                     return true;
@@ -168,6 +187,7 @@ namespace InGameWiki
         /// <summary>
         /// Only valid when the page is external (not generated from a ThingDef)
         /// </summary>
+        public string RequiresResearchRaw;
         public string ID { get; internal set; }
         public string Title;
         public string ShortDescription;
@@ -177,6 +197,7 @@ namespace InGameWiki
 
         public List<WikiElement> Elements = new List<WikiElement>();
 
+        private ResearchProjectDef requiresResearch;
         private float lastHeight;
         private Vector2 scroll;
         private Vector2 descScroll;

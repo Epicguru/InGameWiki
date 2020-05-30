@@ -42,6 +42,6 @@ Inside this folder, you can add custom pages.
 
 You can also add custom content to auto-generated item pages. For example, add images and text to the page that was generated for a gun added by your mod.
 
-[Click here to see how to add content to existing auto-generated pages.](https://www.example.com)
+[Click here to see how to add content to existing auto-generated pages.](https://github.com/Epicguru/InGameWiki/blob/master/EditingAutogenPages.md)
 
 WIP documentation.

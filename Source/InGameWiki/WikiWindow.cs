@@ -62,7 +62,8 @@ namespace InGameWiki
 
             // Title
             Text.Font = GameFont.Medium;
-            Widgets.Label(titleArea, Wiki.WikiTitle);
+            var titleSize = Text.CalcSize(Wiki.WikiTitle);
+            Widgets.Label(new Rect(titleArea.x + (titleArea.width - titleSize.x) * 0.5f, titleArea.y + (titleArea.height - titleSize.y) * 0.5f, titleSize.x, titleSize.y), Wiki.WikiTitle);
 
             // Search box.
             SearchText = Widgets.TextField(searchArea, SearchText);

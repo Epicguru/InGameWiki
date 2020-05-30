@@ -38,7 +38,7 @@ namespace YourModNamespace
 In your mod folder, next to the Textures, Assemblies, About folders, create a new folder called `Wiki`.
 Inside this folder, you can add custom pages.
 
-[Click here to see the format of custom pages.](https://www.example.com)
+[Click here to see how to create custom pages.](https://github.com/Epicguru/InGameWiki/blob/master/ExternalPages.md)
 
 You can also add custom content to auto-generated item pages. For example, add images and text to the page that was generated for a gun added by your mod.
 

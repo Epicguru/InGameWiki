@@ -1,8 +1,0 @@
-ID: TestPage_ExampleWiki
-Title: TestPage
-
-ENDTAGS
-
-#!This is an example page!#
-
-#Here is some random text. I could add images too, but I can't be bothered!#

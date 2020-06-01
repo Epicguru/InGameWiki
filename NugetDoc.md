@@ -44,4 +44,9 @@ You can also add custom content to auto-generated item pages. For example, add i
 
 [Click here to see how to add content to existing auto-generated pages.](https://github.com/Epicguru/InGameWiki/blob/master/EditingAutogenPages.md)
 
+# Example mod
+This wiki mod was initially created for my mod _Antimatter Annihilation_:
+[Link to Antimatter Annihilation repository](https://github.com/Epicguru/AntimatterAnnihilation)
+There you will find all the wiki files, folder structures and every source file required to make a fully funcional wiki.
+
 WIP documentation.

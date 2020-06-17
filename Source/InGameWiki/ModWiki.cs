@@ -21,7 +21,7 @@ namespace InGameWiki
         {
             get
             {
-                return "1.2.0";
+                return "1.3.0";
             }
         }
 
@@ -214,7 +214,15 @@ namespace InGameWiki
                 if (!shouldAdd)
                     continue;
 
-                var page = WikiPage.CreateFromThingDef(thingDef); 
+                WikiPage page = null;
+                try
+                {
+                    page = WikiPage.CreateFromThingDef(thingDef);
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Failed to generate wiki page for {mod.Content?.Name ?? "<no-name-mod>"}'s ThingDef '{thingDef.LabelCap}': {e}");
+                }
                 this.Pages.Add(page);
             }
 

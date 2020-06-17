@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <Excluded>
+    <exclude>D:\Steam Games\steamapps\common\RimWorld\Mods\InGameWiki\.git</exclude>
+    <exclude>D:\Steam Games\steamapps\common\RimWorld\Mods\InGameWiki\Assemblies\Lib.InGameWiki.pdb</exclude>
+    <exclude>D:\Steam Games\steamapps\common\RimWorld\Mods\InGameWiki\Source</exclude>
+  </Excluded>
+</Configuration>

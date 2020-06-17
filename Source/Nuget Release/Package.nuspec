@@ -3,7 +3,7 @@
   <metadata>
     <title>In-game wiki API</title>
     <id>Lib.InGameWiki</id>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
     <authors>Epicguru</authors>
     <owners>Epicguru</owners>
     <summary>Adds support for the in-game wiki mod to your own mod. (Rimworld game)</summary>
@@ -12,7 +12,7 @@
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/Epicguru/InGameWiki</projectUrl>
     <icon>Icon.png</icon>
-    <releaseNotes>Changed external page format, added spoiler system..</releaseNotes>
+    <releaseNotes>Small tweaks, full spanish translation, more debugging capabilites.</releaseNotes>
     <copyright>Copyright 2020</copyright>
     <tags>Rimworld Mod Wiki</tags>
     <language>C#</language>

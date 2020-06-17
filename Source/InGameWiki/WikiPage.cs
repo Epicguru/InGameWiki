@@ -60,7 +60,7 @@ namespace InGameWiki
             try
             {
                 // Crafting (where is it crafted)
-                if (thing.recipeMaker != null)
+                if (thing.recipeMaker?.recipeUsers != null)
                 {
                     var crafting = new SectionWikiElement();
                     crafting.Name = "Wiki.CraftedAt".Translate();

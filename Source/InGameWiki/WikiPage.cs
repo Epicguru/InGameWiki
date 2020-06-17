@@ -17,85 +17,113 @@ namespace InGameWiki
 
             WikiPage p = new WikiPage();
 
-            p.Title = thing.LabelCap;
-            p.ShortDescription = thing.DescriptionDetailed;
-            p.Icon = thing.uiIcon;
-
-            // Cost.
-            if(thing.costList != null)
+            try
             {
-                var cost = new SectionWikiElement();
-                cost.Name = "Wiki.Cost".Translate();
-
-                foreach (var costThing in thing.costList)
-                {
-                    cost.Elements.Add(new WikiElement() { DefForIconAndLabel = costThing.thingDef, Text = costThing.count <= 1 ? "" : $"x{costThing.count}" });
-                }
-                if (cost.Elements.Count > 0)
-                {
-                    p.Elements.Add(cost);
-                }
-
-                // Show recipes added by this production thing.
-                foreach (var rec in thing.AllRecipes)
-                {
-                    p.Elements.Add(WikiElement.Create(rec.defName));
-                }
+                p.Title = thing.LabelCap;
+                p.ShortDescription = thing.DescriptionDetailed;
+                p.Icon = thing.uiIcon;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Exception setting page basics.", e);
             }
 
-            // Crafting (where is it crafted)
-            if (thing.recipeMaker != null)
+            try
             {
-                var crafting = new SectionWikiElement();
-                crafting.Name = "Wiki.CraftedAt".Translate();
-
-                foreach (var user in thing.recipeMaker.recipeUsers)
+                // Cost.
+                if (thing.costList != null)
                 {
-                    crafting.Elements.Add(new WikiElement() {DefForIconAndLabel = user});
-                }
+                    var cost = new SectionWikiElement();
+                    cost.Name = "Wiki.Cost".Translate();
 
-                if(crafting.Elements.Count > 0)
-                {
-                    p.Elements.Add(crafting);
-                }
-            }
-
-            // Research prerequisite.
-            var research = new SectionWikiElement();
-            research.Name = "Wiki.ResearchToUnlock".Translate();
-            if (thing.researchPrerequisites != null && thing.researchPrerequisites.Count > 0) // Generally buildings.
-            {
-                foreach (var r in thing.researchPrerequisites)
-                {
-                    research.Elements.Add(new WikiElement() {Text = r.LabelCap});
-                }
-
-            }
-            if (thing.recipeMaker?.researchPrerequisites != null) // Generally craftable items.
-            {
-                foreach (var r in thing.recipeMaker.researchPrerequisites)
-                {
-                    research.Elements.Add(new WikiElement() { Text = r.LabelCap });
-                }
-            }
-            if (thing.recipeMaker?.researchPrerequisite != null) // Generally craftable items.
-            {
-                var r = thing.recipeMaker.researchPrerequisite;
-                research.Elements.Add(new WikiElement() { Text = r.LabelCap });
-            }
-
-            if (research.Elements.Count > 0)
-                p.Elements.Add(research);
-
-            if (DebugMode)
-            {
-                if (thing.weaponTags != null)
-                {
-                    foreach (var tag in thing.weaponTags)
+                    foreach (var costThing in thing.costList)
                     {
-                        p.Elements.Add(new WikiElement() { Text = $"WeaponTag: {tag}" });
+                        cost.Elements.Add(new WikiElement() { DefForIconAndLabel = costThing.thingDef, Text = costThing.count <= 1 ? "" : $"x{costThing.count}" });
+                    }
+                    if (cost.Elements.Count > 0)
+                    {
+                        p.Elements.Add(cost);
+                    }
+
+                    // Show recipes added by this production thing.
+                    foreach (var rec in thing.AllRecipes)
+                    {
+                        p.Elements.Add(WikiElement.Create(rec.defName));
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Exception generating thing cost list.", e);
+            }
+
+            try
+            {
+                // Crafting (where is it crafted)
+                if (thing.recipeMaker != null)
+                {
+                    var crafting = new SectionWikiElement();
+                    crafting.Name = "Wiki.CraftedAt".Translate();
+
+                    foreach (var user in thing.recipeMaker.recipeUsers)
+                    {
+                        crafting.Elements.Add(new WikiElement() { DefForIconAndLabel = user });
+                    }
+
+                    if (crafting.Elements.Count > 0)
+                    {
+                        p.Elements.Add(crafting);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Exception generating thing crafting location list.", e);
+            }
+
+            try
+            {
+                // Research prerequisite.
+                var research = new SectionWikiElement();
+                research.Name = "Wiki.ResearchToUnlock".Translate();
+                if (thing.researchPrerequisites != null && thing.researchPrerequisites.Count > 0) // Generally buildings.
+                {
+                    foreach (var r in thing.researchPrerequisites)
+                    {
+                        research.Elements.Add(new WikiElement() { Text = r.LabelCap });
+                    }
+
+                }
+                if (thing.recipeMaker?.researchPrerequisites != null) // Generally craftable items.
+                {
+                    foreach (var r in thing.recipeMaker.researchPrerequisites)
+                    {
+                        research.Elements.Add(new WikiElement() { Text = r.LabelCap });
+                    }
+                }
+                if (thing.recipeMaker?.researchPrerequisite != null) // Generally craftable items.
+                {
+                    var r = thing.recipeMaker.researchPrerequisite;
+                    research.Elements.Add(new WikiElement() { Text = r.LabelCap });
+                }
+
+                if (research.Elements.Count > 0)
+                    p.Elements.Add(research);
+
+                if (DebugMode)
+                {
+                    if (thing.weaponTags != null)
+                    {
+                        foreach (var tag in thing.weaponTags)
+                        {
+                            p.Elements.Add(new WikiElement() { Text = $"WeaponTag: {tag}" });
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Exception generating thing research requirements.", e);
             }
 
             p.Def = thing;

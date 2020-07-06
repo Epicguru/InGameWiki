@@ -1,10 +1,10 @@
-﻿using System;
-using HarmonyLib;
+﻿using HarmonyLib;
+using InGameWiki.Internal;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using InGameWiki.Internal;
 using Verse;
 
 [assembly: InternalsVisibleTo("InGameWikiMod")]
@@ -94,20 +94,39 @@ namespace InGameWiki
         /// <summary>
         /// Creates and registers a new mod wiki.
         /// You must pass in your mod instance. Do not call this method more than once per mod!
+        /// Uses the default ModWiki class. See <see cref="Create(Mod, ModWiki)"/> to use a custom ModWiki class.
         /// </summary>
         /// <param name="mod">Your mod instance.</param>
         /// <returns>The newly created ModWiki object, or null if creation failed.</returns>
         public static ModWiki Create(Mod mod)
         {
-            if(mod == null)
+            return Create(mod, new ModWiki());
+        }
+
+        /// <summary>
+        /// Creates and registers a new mod wiki.
+        /// You must pass in your mod instance. Do not call this method more than once per mod!
+        /// You must also supply an instance of a ModWiki subclass. This version should only be used if you need to add specialized custom behaviour to the
+        /// ModWiki. Otherwise, use <see cref="Create(Mod)"/>.
+        /// </summary>
+        /// <param name="mod">Your mod instance.</param>
+        /// <returns>The newly created ModWiki object, or null if creation failed.</returns>
+        public static ModWiki Create(Mod mod, ModWiki wiki)
+        {
+            if (mod == null)
             {
                 Log.Error("Cannot pass in null mod to create wiki.");
                 return null;
             }
 
+            if (wiki == null)
+            {
+                Log.Error("Cannot pass in null ModWiki instance to create wiki.");
+                return null;
+            }
+
             try
             {
-                var wiki = new ModWiki();
                 wiki.Mod = mod;
                 wiki.GenerateFromMod(mod);
 
@@ -117,7 +136,7 @@ namespace InGameWiki
 
                 return wiki;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.Error($"Exception creating wiki for {mod.Content.Name}: {e}");
                 return null;
@@ -205,10 +224,18 @@ namespace InGameWiki
 
         private void GenerateFromMod(Mod mod)
         {
+            var toExclude = GetExcludedDefs(mod);
+
             foreach (var def in mod.Content.AllDefs)
             {
                 if (!(def is ThingDef thingDef))
                     continue;
+
+                if (toExclude.Contains(def.defName))
+                {
+                    toExclude.Remove(def.defName);
+                    continue;
+                }
 
                 bool shouldAdd = AutogenPageFilter(thingDef);
                 if (!shouldAdd)
@@ -228,6 +255,43 @@ namespace InGameWiki
 
             string dir = Path.Combine(mod.Content.RootDir, "Wiki");
             PageParser.AddAllFromDirectory(this, dir);
+
+            if(toExclude.Count != 0)
+            {
+                Log.Error($"{mod.Content?.Name ?? "<no-name-mod>"}'s Exclude.txt file includes names of defs that do not exist:");
+                foreach (var name in toExclude)
+                {
+                    Log.Error($"  -{name}");
+                }
+            }
+        }
+
+        private List<string> GetExcludedDefs(Mod mod)
+        {
+            string file = Path.Combine(mod.Content.RootDir, "Wiki", "Exclude.txt");
+            if (!File.Exists(file))
+            {
+                return new List<string>();
+            }
+
+            List<string> found = new List<string>();
+
+            var lines = File.ReadAllLines(file);
+            foreach (var l in lines)
+            {
+                string line = l.Trim();
+
+                // Check that the names correspond to defs.
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                if (line.StartsWith("//"))
+                    continue;
+
+                found.Add(line);
+            }
+
+            return found;
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ So, for example, if you have a gun def called `LaserGun` then you would create t
 
 Inside the file, you need to specify tags and content just like with external files. If you have not read the external files documentation yet, read it now.
 
-The format for editing existing pages is identical to external pages, except that certain tags are disabled, such as Icon or Description because those are generated from the Def. You do not need to specify a page ID.
+The format for editing existing pages is identical to external pages, except that certain tags are disabled, such as Title. You do not need to specify a page ID.
 
 # Example complete file
 Assuming you have a def called `LaserGun`, here is the file `Thing_LaserGun.txt`:

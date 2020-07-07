@@ -122,6 +122,10 @@ namespace InGameWiki
                     {
                         ModWiki.ShowPage(pair.wiki, pair.page);
                     }
+                    else
+                    {
+                        ModWiki.OpenInspectWindow(DefForIconAndLabel);
+                    }
                 }
                 size.y += 32;
                 imageOffset.x = 200;

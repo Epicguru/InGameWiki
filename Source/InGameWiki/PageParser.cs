@@ -200,7 +200,9 @@ namespace InGameWiki
             else
             {
                 Texture2D bg = ContentFinder<Texture2D>.Get(TryGetTag("Background", ""), false);
+                Texture2D icon = ContentFinder<Texture2D>.Get(TryGetTag("Icon", "WIKI__ICON_NOT_SPECIFIED"), false);
                 string requiredResearch = TryGetTag("RequiredResearch", "");
+                string desc = TryGetTag("Description", null);
                 bool alwaysSpoiler = TryGetTag("AlwaysSpoiler", "false") != "false";
 
                 p.Background = bg;
@@ -208,6 +210,10 @@ namespace InGameWiki
                     p.RequiresResearchRaw = requiredResearch;
                 if (alwaysSpoiler)
                     p.IsAlwaysSpoiler = true;
+                if (icon != null)
+                    p.Icon = icon;
+                if (desc != null)
+                    p.ShortDescription = desc;
             }
 
             StringBuilder str = new StringBuilder();

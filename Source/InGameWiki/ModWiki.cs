@@ -21,7 +21,7 @@ namespace InGameWiki
         {
             get
             {
-                return "1.3.0";
+                return "1.4.0";
             }
         }
 
@@ -110,6 +110,7 @@ namespace InGameWiki
         /// ModWiki. Otherwise, use <see cref="Create(Mod)"/>.
         /// </summary>
         /// <param name="mod">Your mod instance.</param>
+        /// <param name="wiki">Your non-null ModWiki subclass instance.</param>
         /// <returns>The newly created ModWiki object, or null if creation failed.</returns>
         public static ModWiki Create(Mod mod, ModWiki wiki)
         {

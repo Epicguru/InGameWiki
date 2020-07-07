@@ -50,10 +50,12 @@ You can also add custom content to auto-generated item pages. For example, add i
 The wiki mod takes all of the defs added by your mod and discards certain ones, such as _Motes_, _Projectiles_, _Blueprints_ etc.
 However, sometimes you want to tell the mod to ignore a specific def. This could be either to hide content from the player, or just because it gives no useful information.
 
-Suppose that you want to remove the generated page for a def called _MyBoringDef_. The steps are as follows:
+Suppose that you want to remove the generated page for a def called `MyBoringDef`. The steps are as follows:
 1. Go into your `Wiki` folder. See [here](https://github.com/Epicguru/InGameWiki/blob/master/ExternalPages.md) for more info on folder structure.
 2. Create a new file called `Exclude.txt`. Spelling is imporant!
-3. Type the name of the def that you want to exclude. One def name per line.
+3. Open the txt file.
+4. Type the name(s) of the def that you want to exclude, such as `MyBoringDef`. One def name per line.
+5. Save the file.
 
 Inside the `Excluded.txt` file, blank lines are ignored. You can also type comments by starting the line with _//_ such as `// I am a comment`.
 

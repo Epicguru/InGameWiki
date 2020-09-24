@@ -21,11 +21,39 @@ namespace InGameWiki
         {
             get
             {
-                return "1.4.0";
+                return "1.5.0";
             }
         }
 
         public static bool NoSpoilerMode { get; set; } = true;
+
+        /// <summary>
+        /// Checks for 
+        /// </summary>
+        public static bool IsWikiModInstalled
+        {
+            get
+            {
+                if (wikiModInstallStatus == 0)
+                {
+                    // Start by assuming not installed.
+                    wikiModInstallStatus = 2;
+                    foreach (var mod in LoadedModManager.ModHandles)
+                    {
+                        var c = mod.Content;
+                        //Log.Message($"Name: {c.Name}, PackageID: {c.PackageId}, PackageIDPF: {c.PackageIdPlayerFacing}");
+                        if (c.PackageId == "co.uk.epicguru.ingamewiki")
+                        {
+                            wikiModInstallStatus = 1;
+                            Log.Message("<color=cyan>Wiki mod is installed correctly, full API enabled.</color>");
+                            break;
+                        }
+                    }
+                }
+
+                return wikiModInstallStatus == 1;
+            }
+        }
         public static IReadOnlyList<ModWiki> AllWikis
         {
             get
@@ -33,7 +61,9 @@ namespace InGameWiki
                 return allWikis;
             }
         }
+
         private static List<ModWiki> allWikis = new List<ModWiki>();
+        private static int wikiModInstallStatus; // 0: not checked, 1: installed, 2: not installed
 
         internal static void Patch(Harmony harmonyInstance)
         {
@@ -129,6 +159,16 @@ namespace InGameWiki
             try
             {
                 wiki.Mod = mod;
+
+                // If the wiki mod is not installed, then don't generate wiki contents, they aren't needed.
+                // This could cause issues if mod's try to the access those pages later, but normally wiki
+                // creation will be fire-and-forget.
+                if (!IsWikiModInstalled)
+                {
+                    Log.Warning($"A wiki was registered for mod '{mod.Content.Name}', but the InGameWiki mod is not installed. Dummy wiki has been created instead.");
+                    return wiki;
+                }
+
                 wiki.GenerateFromMod(mod);
 
                 allWikis.Add(wiki);

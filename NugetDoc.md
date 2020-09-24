@@ -4,7 +4,6 @@
 3. Inside the package manager window, click Browse and search for 'Lib.InGameWiki'.
 4. Select the package (author: Epicguru) and select Install.
 5. Package should now be installed. Under references, click on InGameWiki and find the properties tab.
-6. Change Copy Local from True to False.
 
 # How to add basic auto-generated wiki
 1. Create a new C# file in your project called `Wiki.cs`
@@ -25,6 +24,10 @@ namespace YourModNamespace
             
             // Create and register a new wiki.
             var wiki = ModWiki.Create(myMod);
+            
+            // Check if wiki creation was successful. If not, exit from the method.
+            if(wiki == null)
+                return;
             
             // Change some wiki properties.
             wiki.WikiTitle = "MyMod: My wiki";

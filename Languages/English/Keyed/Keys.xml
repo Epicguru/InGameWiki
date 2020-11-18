@@ -17,4 +17,10 @@
 <!-- Misc -->
 <Wiki.OpenWikiPage>Open wiki page</Wiki.OpenWikiPage>
 
+<!-- Settings menu -->
+<Wiki.ShowMenuBarButton>Show menu bar button</Wiki.ShowMenuBarButton>
+<Wiki.ShowMenuBarButtonDesc>When enabled, a wiki button is added to the bottom of the game screen.</Wiki.ShowMenuBarButtonDesc>
+<Wiki.ShowInspectorButton>Show inspector button</Wiki.ShowInspectorButton>
+<Wiki.ShowInspectorButtonDesc>When enabled, any item that has a corresponding wiki page displays a button to open that page in the inspection window.\nRequires a game restart to take effect.</Wiki.ShowInspectorButtonDesc>
+
  </LanguageData>

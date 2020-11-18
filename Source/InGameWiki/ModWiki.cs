@@ -65,7 +65,7 @@ namespace InGameWiki
         private static List<ModWiki> allWikis = new List<ModWiki>();
         private static int wikiModInstallStatus; // 0: not checked, 1: installed, 2: not installed
 
-        internal static void Patch(Harmony harmonyInstance)
+        internal static void Patch(Harmony harmonyInstance, bool doInspectorButton)
         {
             if (harmonyInstance == null)
                 return;
@@ -105,8 +105,10 @@ namespace InGameWiki
 
             if (canPatch)
             {
-                harmonyInstance.Patch(method, postfix: patch);
-                Log.Message("<color=cyan>Patched game for in-game wiki.</color>");
+                if(doInspectorButton)
+                    harmonyInstance.Patch(method, postfix: patch);
+
+                Log.Message($"<color=cyan>Patched game for in-game wiki. Inspector button is {(doInspectorButton ? "enabled" : "<color=red>disabled</color>")}</color>");
             }
         }
 

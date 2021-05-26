@@ -40,16 +40,27 @@ namespace InGameWiki
                     {
                         cost.Elements.Add(new WikiElement() { DefForIconAndLabel = costThing.thingDef, Text = costThing.count <= 1 ? "" : $"x{costThing.count}" });
                     }
+
+                    int outputCount = thing.recipeMaker?.productCount ?? 1;
+
+                    cost.Elements.Add(WikiElement.Create("Wiki.OutputCount".Translate(outputCount)));
+
                     if (cost.Elements.Count > 0)
                     {
                         p.Elements.Add(cost);
                     }
 
+                    var creates = new SectionWikiElement();
+                    creates.Name = "Wiki.Creates".Translate();
+
                     // Show recipes added by this production thing.
                     foreach (var rec in thing.AllRecipes)
                     {
-                        p.Elements.Add(WikiElement.Create(rec.defName));
+                        creates.Elements.Add(WikiElement.Create($" • {rec.LabelCap}"));
                     }
+
+                    if (creates.Elements.Count > 0)
+                        p.Elements.Add(creates);
                 }
             }
             catch (Exception e)
@@ -90,7 +101,7 @@ namespace InGameWiki
                 {
                     foreach (var r in thing.researchPrerequisites)
                     {
-                        research.Elements.Add(new WikiElement() { Text = r.LabelCap });
+                        research.Elements.Add(new WikiElement() { Text = $" • {r.LabelCap}" });
                     }
 
                 }
@@ -98,13 +109,13 @@ namespace InGameWiki
                 {
                     foreach (var r in thing.recipeMaker.researchPrerequisites)
                     {
-                        research.Elements.Add(new WikiElement() { Text = r.LabelCap });
+                        research.Elements.Add(new WikiElement() { Text = $" • {r.LabelCap}" });
                     }
                 }
                 if (thing.recipeMaker?.researchPrerequisite != null) // Generally craftable items.
                 {
                     var r = thing.recipeMaker.researchPrerequisite;
-                    research.Elements.Add(new WikiElement() { Text = r.LabelCap });
+                    research.Elements.Add(new WikiElement() { Text = $" • {r.LabelCap}" });
                 }
 
                 if (research.Elements.Count > 0)
@@ -215,6 +226,8 @@ namespace InGameWiki
             }
         }
 
+        public virtual Color IconColor => Def is ThingDef td ? td.graphicData?.color ?? Color.white : Color.white;
+
         /// <summary>
         /// Only valid when the page is external (not generated from a ThingDef)
         /// </summary>
@@ -254,10 +267,11 @@ namespace InGameWiki
             if (drawnIcon)
             {
                 // Draws icon and opens zoom view window if clicked.
-                if (Widgets.ButtonImageFitted(new Rect(maxBounds.x + PADDING, maxBounds.y + PADDING, 128, 128), Icon, Color.white, Color.white * 0.8f))
+                if (Widgets.ButtonImageFitted(new Rect(maxBounds.x + PADDING, maxBounds.y + PADDING, 128, 128), Icon, IconColor, IconColor * 0.8f))
                 {
                     Find.WindowStack?.Add(new UI_ImageInspector(Icon));
                 }
+                GUI.color = Color.white;
             }
 
             // Title.

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using HarmonyLib;
 using UnityEngine;
 using Verse;
 
@@ -11,6 +13,7 @@ namespace InGameWiki
     public static class PageParser
     {
         private static Dictionary<string, string> pageTags = new Dictionary<string, string>();
+        private static Dictionary<Type, MethodInfo> classToParser = new Dictionary<Type, MethodInfo>();
 
         /// <summary>
         /// Generates wiki pages from the .txt files supplied by the mod inside it's Wiki folder.
@@ -87,7 +90,7 @@ namespace InGameWiki
                     var existing = wiki.FindPageFromDef(thingDefName);
                     if (existing != null)
                     {
-                        Parse(File.ReadAllText(file), existing);
+                        Parse(File.ReadAllText(file), existing, fileName);
                         //Log.Message("Added to existing " + file);
                     }
                     else
@@ -97,7 +100,7 @@ namespace InGameWiki
                     continue;
                 }
 
-                var page = Parse(File.ReadAllText(file), null);
+                var page = Parse(File.ReadAllText(file), null, fileName);
                 if (page == null)
                 {
                     Log.Error($"Failed to load wiki page from {file}");
@@ -116,7 +119,7 @@ namespace InGameWiki
             return pageTags.TryGetValue(tag, out string found) ? found : ifNotFound;
         }
 
-        public static WikiPage Parse(string rawText, WikiPage existing)
+        public static WikiPage Parse(string rawText, WikiPage existing, string fileName)
         {
             string[] lines = rawText.Split('\n');
 
@@ -138,7 +141,7 @@ namespace InGameWiki
                 // This is only allowed if this is not an external page.
                 if (existing == null)
                 {
-                    Log.Error("External wiki page does not have an ENDTAGS line.\nExternal pages need to have the following format:\n\nTAG:Data\nOTHERTAG:Other Data\nENDTAGS\n... Page data below ...\n\nRaw page:\n" + rawText);
+                    Log.Error($"External wiki page '{fileName}' does not have an ENDTAGS line.\nExternal pages need to have the following format:\n\nTAG:Data\nOTHERTAG:Other Data\nENDTAGS\n... Page data below ...\n\nRaw page:\n" + rawText);
                     return null;
                 }
             }
@@ -152,7 +155,7 @@ namespace InGameWiki
 
                     if (!line.Contains(':'))
                     {
-                        Log.Error($"External wiki page tag error, line {i + 1}: incorrect format. Expected 'TAG:Data', got '{line.Trim()}'.\nRaw file:\n{rawText}");
+                        Log.Error($"External wiki page '{fileName}' tag error, line {i + 1}: incorrect format. Expected 'TAG:Data', got '{line.Trim()}'.\nRaw file:\n{rawText}");
                         continue;
                     }
 
@@ -160,12 +163,12 @@ namespace InGameWiki
                     string tag = parts[0];
                     if (string.IsNullOrWhiteSpace(tag))
                     {
-                        Log.Error($"External wiki page tag error, line {i + 1}: blank tag.\nRaw file:\n{rawText}");
+                        Log.Error($"External wiki page '{fileName}' tag error, line {i + 1}: blank tag.\nRaw file:\n{rawText}");
                         continue;
                     }
                     if (pageTags.ContainsKey(tag))
                     {
-                        Log.Error($"External wiki page tag error, line {i + 1}: duplicate tag '{tag}'.\nRaw file:\n{rawText}");
+                        Log.Error($"External wiki page '{fileName}' tag error, line {i + 1}: duplicate tag '{tag}'.\nRaw file:\n{rawText}");
                         continue;
                     }
                     pageTags.Add(tag, parts[1].Trim());
@@ -185,7 +188,7 @@ namespace InGameWiki
                 bool alwaysSpoiler = TryGetTag("AlwaysSpoiler", "false") != "false";
 
                 if (id == INVALID_ID)
-                    Log.Warning($"External wiki page with title {title} does not have an ID tag. It should specify 'ID: MyPageID'. It may break things.");
+                    Log.Warning($"External wiki page '{fileName}' with title {title} does not have an ID tag. It should specify 'ID: MyPageID'. It may break things.");
 
                 p.ID = id;
                 p.Title = title;
@@ -228,8 +231,15 @@ namespace InGameWiki
                 {
                     int add = 0;
 
+                    // Custom elements
+                    string final = CheckParseChar('|', CurrentlyParsing.Text, last, i, c, ref parsing, ref add);
+                    if (final != null)
+                    {
+                        AddCustom(final);
+                    }
+
                     // Text
-                    string final = CheckParseChar('#', CurrentlyParsing.Text, last, i, c, ref parsing, ref add);
+                    final = CheckParseChar('#', CurrentlyParsing.Text, last, i, c, ref parsing, ref add);
                     if(final != null)
                     {
                         if (final.StartsWith("!"))
@@ -364,7 +374,7 @@ namespace InGameWiki
                 else
                 {
                     // Invalid.
-                    Log.Error($"Error parsing wiki on line {i + 1}: got '{c}' which is invalid since {currentParsing} is currently active. Raw page:\n{rawText}");
+                    Log.Error($"Error parsing wiki '{fileName}' on line {i + 1}: got '{c}' which is invalid since {currentParsing} is currently active. Raw page:\n{rawText}");
                     return null;
                 }
             }
@@ -373,13 +383,89 @@ namespace InGameWiki
             {
                 if (!string.IsNullOrWhiteSpace(txt))
                 {
+                    if (large)
+                        txt = $"<color=cyan>{txt}</color>";
+
                     var text = WikiElement.Create(txt);
                     text.FontSize = large ? GameFont.Medium : GameFont.Small;
                     p.Elements.Add(text);
                 }
             }
 
+            void AddCustom(string txt)
+            {
+                if (string.IsNullOrWhiteSpace(txt))
+                {
+                    Log.Warning("Empty custom tag found when parsing wiki.");
+                    return;
+                }
+
+                int index = txt.IndexOf(':');
+                if (index < 0)
+                {
+                    Log.Error($"Wiki: Invalid custom element tag '{txt}'. It should be in the following format: |Namespace.ClassName:data goes here|");
+                    return;
+                }
+
+                string klassPath = txt.Substring(0, index);
+                string input = txt.Substring(index + 1);
+
+                Type foundType = GenTypes.GetTypeInAnyAssembly(klassPath);
+                if (foundType == null)
+                {
+                    Log.Error($"Wiki: Failed to find class '{klassPath}' for custom element parsing.");
+                    return;
+                }
+
+                var parser = GetParser(foundType);
+                if (parser == null)
+                {
+                    Log.Error($"Wiki: Failed to find parser method in class '{foundType.FullName}'. There should be a static method in the class that has a single input parameter of type InGameWiki.CustomElementArgs and a return value of type InGameWiki.WikiElement.");
+                    return;
+                }
+
+                try
+                {
+                    var args = new CustomElementArgs(p, input);
+                    parser.Invoke(null, new object[]{args});
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Wiki: Exception executing custom page parser {foundType.FullName}.{parser.Name}():");
+                    Log.Error(e.ToString());
+                }
+            }
+
             return p;
+        }
+
+        private static MethodInfo GetParser(Type type)
+        {
+            if (type == null)
+                return null;
+
+            if (classToParser.TryGetValue(type, out var found))
+                return found;
+
+            var methods = AccessTools.GetDeclaredMethods(type);
+            foreach(var method in methods)
+            {
+                if (method.IsStatic && !method.IsGenericMethod)
+                {
+                    var ps = method.GetParameters();
+                    if (ps.Length != 1 || ps[0].ParameterType != typeof(CustomElementArgs))
+                        continue;
+
+                    if (!typeof(WikiElement).IsAssignableFrom(method.ReturnType))
+                        continue;
+
+                    classToParser.Add(type, method);
+                    return method;
+                }
+            }
+
+            classToParser.Add(type, null);
+            return null;
         }
 
         public enum CurrentlyParsing

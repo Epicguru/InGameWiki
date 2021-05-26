@@ -11,7 +11,9 @@
 
 <!-- Autogen stuff -->
 <Wiki.Cost>Cost</Wiki.Cost>
+<Wiki.OutputCount> To craft {0}x item</Wiki.OutputCount>
 <Wiki.CraftedAt>Crafted at</Wiki.CraftedAt>
+<Wiki.Creates>Adds recipes</Wiki.Creates>
 <Wiki.ResearchToUnlock>Research to unlock</Wiki.ResearchToUnlock>
 
 <!-- Misc -->

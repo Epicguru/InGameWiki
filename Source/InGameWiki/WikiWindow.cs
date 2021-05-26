@@ -25,11 +25,11 @@ namespace InGameWiki
         public static WikiWindow CurrentActive { get; private set; }
 
         public ModWiki Wiki;
-        public int TopHeight = 34;
+        public int TopHeight = 38;
         public int SearchHeight = 34;
-        public int SideWidth = 260;
+        public int SideWidth = 330;
         public WikiPage CurrentPage { get; set; }
-        public override Vector2 InitialSize => new Vector2(900, 800);
+        public override Vector2 InitialSize => new Vector2(1100, 800);
         public string SearchText = "";
 
         private Vector2 scroll;
@@ -69,7 +69,7 @@ namespace InGameWiki
             SearchText = Widgets.TextField(searchArea, SearchText);
 
             // Draw all pages list.
-            Widgets.BeginScrollView(pagesArea, ref scroll, new Rect(pagesArea.x, pagesArea.y, pagesArea.width, lastHeight));
+            Widgets.BeginScrollView(pagesArea, ref scroll, new Rect(pagesArea.x, pagesArea.y, pagesArea.width - 32, lastHeight));
             lastHeight = 0;
 
             // Normalize search string.
@@ -95,9 +95,13 @@ namespace InGameWiki
                     continue;
                 }
 
-                if(page.Icon != null)
+                if (page.Icon != null)
+                {
+                    GUI.color = page.IconColor;
                     Widgets.DrawTextureFitted(new Rect(pagesArea.x + 4, pagesArea.y + 4 + lastHeight + 5, 24, 24), page.Icon, 1f);
-                bool clicked = Widgets.ButtonText(new Rect(pagesArea.x + 28, pagesArea.y + 4 + lastHeight, pagesArea.width - 28 - 4, 40), page.Title);
+                    GUI.color = Color.white;
+                }
+                bool clicked = Widgets.ButtonText(new Rect(pagesArea.x + 28, pagesArea.y + 4 + lastHeight, pagesArea.width - 32, 40), page.Title);
                 if (clicked)
                 {
                     CurrentPage = page;

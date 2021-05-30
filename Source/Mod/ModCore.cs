@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using HarmonyLib;
+﻿using HarmonyLib;
 using InGameWiki;
 using RimWorld;
 using UnityEngine;
@@ -20,7 +19,7 @@ namespace InGameWikiMod
             ModWiki.Patch(harmony, WikiModSettings.InspectorButtonEnabled);
             try
             {
-                Log.Message($"<color=cyan>Finished loading in-game wiki mod: Version {Assembly.GetExecutingAssembly().GetName().Version}</color>");
+                Log.Message($"<color=cyan>Finished loading in-game wiki mod: Version {ModWiki.APIVersion}</color>");
             }
             catch
             {

@@ -5,7 +5,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>Lib.InGameWiki</PackageId>
-    <Version>1.7.0</Version>
+    <Version>1.7.1</Version>
     <Authors>Epicguru</Authors>
     <Company>Epicguru</Company>
     <Description>Adds support for the in-game wiki mod to your own mod. (Rimworld game)</Description>
@@ -15,7 +15,7 @@
     <PackageIcon>Icon.png</PackageIcon>
     <PackageTags>Rimworld Mod Wiki</PackageTags>
     <PackageReleaseNotes>Added ability to add custom elements in pages.</PackageReleaseNotes>
-    <AssemblyVersion>1.7.0.0</AssemblyVersion>
+    <AssemblyVersion>1.7.1.0</AssemblyVersion>
     <FileVersion>1.7.0.0</FileVersion>
   </PropertyGroup>
 

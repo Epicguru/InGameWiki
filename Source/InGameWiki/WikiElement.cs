@@ -25,6 +25,14 @@ namespace InGameWiki
             };
         }
 
+        public static WikiElement Create(Def def)
+        {
+            return new WikiElement()
+            {
+                DefForIconAndLabel = def
+            };
+        }
+
         public string Text;
         public Texture2D Image;
         public bool AutoFitImage = false;

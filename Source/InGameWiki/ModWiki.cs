@@ -13,6 +13,8 @@ namespace InGameWiki
 {
     public class ModWiki
     {
+        public static string APIVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
         /// <summary>
         /// Checks for 
         /// </summary>

@@ -13,7 +13,7 @@ namespace InGameWiki
     public static class PageParser
     {
         private static Dictionary<string, string> pageTags = new Dictionary<string, string>();
-        private static Dictionary<Type, MethodInfo> classToParser = new Dictionary<Type, MethodInfo>();
+        private static Dictionary<Type, (MethodInfo, bool)> classToParser = new Dictionary<Type, (MethodInfo, bool)>();
 
         /// <summary>
         /// Generates wiki pages from the .txt files supplied by the mod inside it's Wiki folder.
@@ -462,11 +462,6 @@ namespace InGameWiki
                 }
 
                 int index = txt.IndexOf(':');
-                //if (index < 0)
-                //{
-                //    Log.Error($"Wiki: Invalid custom element tag '{txt}'. It should be in the following format: |Namespace.ClassName:data goes here|");
-                //    return;
-                //}
 
                 string klassPath = index < 0 ? txt : txt.Substring(0, index);
                 string input = index < 0 ? null : txt.Substring(index + 1);
@@ -478,24 +473,36 @@ namespace InGameWiki
                     return;
                 }
 
-                var parser = GetParser(foundType);
+                var parser = GetParser(foundType, out bool isMultiReturn);
                 if (parser == null)
                 {
-                    Log.Error($"Wiki: Failed to find parser method in class '{foundType.FullName}'. There should be a static method in the class that has a single input parameter of type InGameWiki.CustomElementArgs and a return value of type InGameWiki.WikiElement.");
+                    Log.Error($"Wiki: Failed to find parser method in class '{foundType.FullName}'. There should be a static method in the class that has a single input parameter of type InGameWiki.CustomElementArgs and a return value of type InGameWiki.WikiElement or an enumerable of WikiElements.");
                     return;
                 }
 
                 try
                 {
                     var args = new CustomElementArgs(p, input);
-                    WikiElement result = parser.Invoke(null, new object[]{args}) as WikiElement;
-                    if (result == null)
+                    if (isMultiReturn)
                     {
-                        Log.Error($"Custom parser method '{parser.DeclaringType.FullName}.{parser.Name}' returned a null WikiElement.");
-                        return;
-                    }
+                        IEnumerable<WikiElement> result = parser.Invoke(null, new object[] { args }) as IEnumerable<WikiElement>;
+                        if (result == null)
+                            return;
 
-                    p.Elements.Add(result);
+                        foreach (var item in result)
+                        {
+                            if(item != null)
+                                p.Elements.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        WikiElement result = parser.Invoke(null, new object[] { args }) as WikiElement;
+                        if (result == null)
+                            return;
+                        
+                        p.Elements.Add(result);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -507,13 +514,17 @@ namespace InGameWiki
             return p;
         }
 
-        private static MethodInfo GetParser(Type type)
+        private static MethodInfo GetParser(Type type, out bool multi)
         {
+            multi = false;
             if (type == null)
                 return null;
 
-            if (classToParser.TryGetValue(type, out var found))
-                return found;
+            if (classToParser.TryGetValue(type, out var pair))
+            {
+                multi = pair.Item2;
+                return pair.Item1;
+            }
 
             var methods = AccessTools.GetDeclaredMethods(type);
             foreach(var method in methods)
@@ -524,15 +535,19 @@ namespace InGameWiki
                     if (ps.Length != 1 || ps[0].ParameterType != typeof(CustomElementArgs))
                         continue;
 
-                    if (!typeof(WikiElement).IsAssignableFrom(method.ReturnType))
+                    bool isSimple = typeof(WikiElement).IsAssignableFrom(method.ReturnType);
+                    bool isMulti = typeof(IEnumerable<WikiElement>).IsAssignableFrom(method.ReturnType);
+
+                    if (!isSimple && !isMulti)
                         continue;
 
-                    classToParser.Add(type, method);
+                    classToParser.Add(type, (method, isMulti));
+                    multi = isMulti;
                     return method;
                 }
             }
 
-            classToParser.Add(type, null);
+            classToParser.Add(type, (null, false));
             return null;
         }
 

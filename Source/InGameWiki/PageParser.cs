@@ -490,13 +490,16 @@ namespace InGameWiki
                     var args = new CustomElementArgs(p, input);
                     WikiElement result = parser.Invoke(null, new object[]{args}) as WikiElement;
                     if (result == null)
+                    {
+                        Log.Error($"Custom parser method '{parser.DeclaringType.FullName}.{parser.Name}' returned a null WikiElement.");
                         return;
+                    }
 
                     p.Elements.Add(result);
                 }
                 catch (Exception e)
                 {
-                    Log.Error($"Wiki: Exception executing custom page parser {foundType.FullName}.{parser.Name}():");
+                    Log.Error($"Wiki: Exception executing custom element parser {foundType.FullName}.{parser.Name}():");
                     Log.Error(e.ToString());
                 }
             }

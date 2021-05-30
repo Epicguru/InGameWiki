@@ -16,6 +16,6 @@ jobs:
       with:
         dotnet-version: '2.0.x'
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore ./Source/InGameWiki/InGameWiki.csproj
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build ./Source/InGameWiki/InGameWiki.csproj --configuration Release --no-restore

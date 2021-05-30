@@ -123,11 +123,11 @@ namespace InGameWiki
             CurrentPage?.Draw(contentArea);
 
             // Spoiler mode toggle.
-            bool spoilerMode = ModWiki.NoSpoilerMode;
+            bool spoilerMode = Wiki.NoSpoilerMode;
             string txt = "Wiki.HideSpoilerMode".Translate();
             float width = Text.CalcSize(txt).x + 24;
             Widgets.CheckboxLabeled(new Rect(maxBounds.x + 5, maxBounds.yMax - 32, width, 32), txt, ref spoilerMode);
-            ModWiki.NoSpoilerMode = spoilerMode;
+            Wiki.NoSpoilerMode = spoilerMode;
         }
 
         public override void PreClose()

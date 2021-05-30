@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System.Reflection;
+using HarmonyLib;
 using InGameWiki;
 using RimWorld;
 using UnityEngine;
@@ -17,7 +18,14 @@ namespace InGameWikiMod
 
             Harmony harmony = new Harmony("co.uk.epicguru.ingamewiki");
             ModWiki.Patch(harmony, WikiModSettings.InspectorButtonEnabled);
-            Log.Message($"<color=cyan>Finished loading in-game wiki mod: Version {ModWiki.Version}</color>");
+            try
+            {
+                Log.Message($"<color=cyan>Finished loading in-game wiki mod: Version {Assembly.GetExecutingAssembly().GetName().Version}</color>");
+            }
+            catch
+            {
+                // Ignore.
+            }
         }
 
         public override void DoSettingsWindowContents(Rect inRect)

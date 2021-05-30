@@ -5,7 +5,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>Lib.InGameWiki</PackageId>
-    <Version>1.6.0</Version>
+    <Version>1.7.0</Version>
     <Authors>Epicguru</Authors>
     <Company>Epicguru</Company>
     <Description>Adds support for the in-game wiki mod to your own mod. (Rimworld game)</Description>
@@ -15,8 +15,19 @@
     <PackageIcon>Icon.png</PackageIcon>
     <PackageTags>Rimworld Mod Wiki</PackageTags>
     <PackageReleaseNotes>Added ability to add custom elements in pages.</PackageReleaseNotes>
-    <AssemblyVersion>1.6.0.0</AssemblyVersion>
-    <FileVersion>1.6.0.0</FileVersion>
+    <AssemblyVersion>1.7.0.0</AssemblyVersion>
+    <FileVersion>1.7.0.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <OutputPath>E:\Steam Games\steamapps\common\RimWorld\Mods\InGameWiki\Assemblies\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,7 +43,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.2.2905" />
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.2.2905">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Lib.Harmony" Version="2.0.4" />
   </ItemGroup>
 

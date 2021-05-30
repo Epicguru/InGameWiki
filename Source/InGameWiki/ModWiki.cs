@@ -14,20 +14,6 @@ namespace InGameWiki
     public class ModWiki
     {
         /// <summary>
-        /// The current loaded version of the wiki mod.
-        /// This is the version of the mod API that is loaded. Ideally, it should match the API version downloaded from NuGet.
-        /// </summary>
-        public static string Version
-        {
-            get
-            {
-                return "1.5.0";
-            }
-        }
-
-        public static bool NoSpoilerMode { get; set; } = true;
-
-        /// <summary>
         /// Checks for 
         /// </summary>
         public static bool IsWikiModInstalled
@@ -251,6 +237,7 @@ namespace InGameWiki
         public string WikiTitle = "Your Mod Name Here";
         public List<WikiPage> Pages = new List<WikiPage>();
         public Mod Mod { get; private set; }
+        public bool NoSpoilerMode { get; set; } = true;
 
         private ModWiki()
         {
@@ -287,7 +274,7 @@ namespace InGameWiki
                 WikiPage page = null;
                 try
                 {
-                    page = WikiPage.CreateFromThingDef(thingDef);
+                    page = WikiPage.CreateFromThingDef(this, thingDef);
                 }
                 catch (Exception e)
                 {
@@ -385,6 +372,25 @@ namespace InGameWiki
             foreach (var page in Pages)
             {
                 if (page != null && page.Def?.defName == defName)
+                    return page;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Finds a page from this wiki given the def of the Thing that the page is about.
+        /// For example, if your mod adds Gun_MySuperGun, then you could access it's wiki page by calling <c>FindPageFromDef(YourDefOf.Gun_MySuperGun)</c>.
+        /// </summary>
+        /// <param name="defName">The definition.</param>
+        /// <returns>The wiki page if found, or null.</returns>
+        public WikiPage FindPageFromDef(Def def)
+        {
+            if (def == null)
+                return null;
+
+            foreach (var page in Pages)
+            {
+                if (page != null && page.Def == def)
                     return page;
             }
             return null;

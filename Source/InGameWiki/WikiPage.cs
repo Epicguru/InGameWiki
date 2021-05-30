@@ -10,12 +10,12 @@ namespace InGameWiki
     {
         public static bool DebugMode = false;
 
-        public static WikiPage CreateFromThingDef(ThingDef thing)
+        public static WikiPage CreateFromThingDef(ModWiki wiki, ThingDef thing)
         {
             if (thing == null)
                 return null;
 
-            WikiPage p = new WikiPage();
+            WikiPage p = new WikiPage(wiki);
 
             try
             {
@@ -146,7 +146,7 @@ namespace InGameWiki
         {
             get
             {
-                if (!ModWiki.NoSpoilerMode)
+                if (!Wiki.NoSpoilerMode)
                     return false;
 
                 if (IsAlwaysSpoiler)
@@ -228,6 +228,7 @@ namespace InGameWiki
 
         public virtual Color IconColor => Def is ThingDef td ? td.graphicData?.color ?? Color.white : Color.white;
 
+        public readonly ModWiki Wiki;
         /// <summary>
         /// Only valid when the page is external (not generated from a ThingDef)
         /// </summary>
@@ -246,6 +247,11 @@ namespace InGameWiki
         private float lastHeight;
         private Vector2 scroll;
         private Vector2 descScroll;
+
+        public WikiPage(ModWiki wiki)
+        {
+            this.Wiki = wiki;
+        }
 
         public virtual void Draw(Rect maxBounds)
         {

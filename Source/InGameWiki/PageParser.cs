@@ -1,10 +1,10 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using HarmonyLib;
 using UnityEngine;
 using Verse;
 
@@ -84,13 +84,74 @@ namespace InGameWiki
                 var info = new FileInfo(file);
                 string fileName = info.Name;
                 fileName = fileName.Substring(0, fileName.Length - info.Extension.Length);
+                if (fileName.StartsWith("All_"))
+                {
+                    // For example All_RimForge.WikiAlloyParser.Method.txt
+                    string methodPath = fileName.Substring("All_".Length);
+                    int last = methodPath.LastIndexOf('.');
+                    if (last < 0)
+                    {
+                        Log.Error($"Wiki parse error: The All_ method path '{methodPath}' is invalid. Expected format: 'Namespace.Class.MethodName'");
+                        continue;
+                    }
+                    string final = methodPath.Substring(0, last) + ':' + methodPath.Substring(last + 1);
+                    var method = AccessTools.Method(final);
+                    if (method == null)
+                    {
+                        Log.Error($"Wiki parse error: The All_ method '{methodPath}' does not correspond to any found class/method. Check spelling!");
+                        continue;
+                    }
+
+                    if (!method.IsStatic || method.IsGenericMethod || method.ReturnType != typeof(bool) ||
+                        method.ContainsGenericParameters || method.GetParameters().Length != 1 ||
+                        method.GetParameters()[0].ParameterType != typeof(ThingDef))
+                    {
+                        Log.Error($"Wiki parse error: The All_ method '{methodPath}' was found but is invalid: it must be a static method that returns a boolean and takes a single parameter of type ThingDef");
+                        continue;
+                    }
+
+                    var allDefs = wiki?.Mod?.Content?.AllDefs;
+                    if (allDefs == null)
+                    {
+                        Log.Error("Unexpected wiki error when parsing All_ page: wiki does not belong to any mod, so cannot scan defs.");
+                        continue;
+                    }
+
+                    string rawText = File.ReadAllText(file);
+                    foreach (var def in wiki.Mod.Content.AllDefs)
+                    {
+                        if (!(def is ThingDef thing))
+                            continue;
+                        bool include;
+                        try
+                        {
+                            include = (bool) method.Invoke(null, new object[] {thing});
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error(e.ToString());
+                            continue;
+                        }
+
+                        if (include)
+                        {
+                            var existing = wiki.FindPageFromDef(thing);
+                            if (existing == null)
+                                continue;
+
+                            Parse(wiki, rawText, existing, fileName);
+                        }
+                    }
+
+                    continue;
+                }
                 if (fileName.StartsWith("Thing_"))
                 {
                     string thingDefName = fileName.Substring(6);
                     var existing = wiki.FindPageFromDef(thingDefName);
                     if (existing != null)
                     {
-                        Parse(File.ReadAllText(file), existing, fileName);
+                        Parse(wiki, File.ReadAllText(file), existing, fileName);
                         //Log.Message("Added to existing " + file);
                     }
                     else
@@ -100,7 +161,7 @@ namespace InGameWiki
                     continue;
                 }
 
-                var page = Parse(File.ReadAllText(file), null, fileName);
+                var page = Parse(wiki, File.ReadAllText(file), null, fileName);
                 if (page == null)
                 {
                     Log.Error($"Failed to load wiki page from {file}");
@@ -119,7 +180,7 @@ namespace InGameWiki
             return pageTags.TryGetValue(tag, out string found) ? found : ifNotFound;
         }
 
-        public static WikiPage Parse(string rawText, WikiPage existing, string fileName)
+        public static WikiPage Parse(ModWiki wiki, string rawText, WikiPage existing, string fileName)
         {
             string[] lines = rawText.Split('\n');
 
@@ -175,7 +236,7 @@ namespace InGameWiki
                 }
             }
 
-            WikiPage p = existing ?? new WikiPage();
+            WikiPage p = existing ?? new WikiPage(wiki);
             if (existing == null)
             {
                 const string INVALID_ID = "INVALID_ID_ERROR";
@@ -232,7 +293,7 @@ namespace InGameWiki
                     int add = 0;
 
                     // Custom elements
-                    string final = CheckParseChar('|', CurrentlyParsing.Text, last, i, c, ref parsing, ref add);
+                    string final = CheckParseChar('|', CurrentlyParsing.Custom, last, i, c, ref parsing, ref add);
                     if (final != null)
                     {
                         AddCustom(final);
@@ -401,14 +462,14 @@ namespace InGameWiki
                 }
 
                 int index = txt.IndexOf(':');
-                if (index < 0)
-                {
-                    Log.Error($"Wiki: Invalid custom element tag '{txt}'. It should be in the following format: |Namespace.ClassName:data goes here|");
-                    return;
-                }
+                //if (index < 0)
+                //{
+                //    Log.Error($"Wiki: Invalid custom element tag '{txt}'. It should be in the following format: |Namespace.ClassName:data goes here|");
+                //    return;
+                //}
 
-                string klassPath = txt.Substring(0, index);
-                string input = txt.Substring(index + 1);
+                string klassPath = index < 0 ? txt : txt.Substring(0, index);
+                string input = index < 0 ? null : txt.Substring(index + 1);
 
                 Type foundType = GenTypes.GetTypeInAnyAssembly(klassPath);
                 if (foundType == null)
@@ -427,7 +488,11 @@ namespace InGameWiki
                 try
                 {
                     var args = new CustomElementArgs(p, input);
-                    parser.Invoke(null, new object[]{args});
+                    WikiElement result = parser.Invoke(null, new object[]{args}) as WikiElement;
+                    if (result == null)
+                        return;
+
+                    p.Elements.Add(result);
                 }
                 catch (Exception e)
                 {
@@ -474,7 +539,8 @@ namespace InGameWiki
             Text,
             Image,
             ThingDefLink,
-            PageLink
+            PageLink,
+            Custom
         }
     }
 }

@@ -2,6 +2,7 @@
 <Configuration>
   <Excluded>
     <exclude>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\InGameWiki\.git</exclude>
+    <exclude>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\InGameWiki\Package.nuspec</exclude>
     <exclude>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\InGameWiki\Source</exclude>
   </Excluded>
 </Configuration>

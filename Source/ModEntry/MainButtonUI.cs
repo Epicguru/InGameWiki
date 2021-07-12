@@ -1,6 +1,7 @@
 ﻿using InGameWiki;
 using RimWorld;
 using System;
+using UnityEngine;
 using Verse;
 
 namespace InGameWikiMod
@@ -8,6 +9,11 @@ namespace InGameWikiMod
     [StaticConstructorOnStartup]
     public class MainButtonUI : MainTabWindow
     {
+        public override void DoWindowContents(Rect inRect)
+        {
+            //base.DoWindowContents(inRect);
+        }
+
         public override void PreOpen()
         {
             base.PreOpen();

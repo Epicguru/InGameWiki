@@ -45,11 +45,10 @@ namespace InGameWikiMod
             }
             else
             {
-                // Yeah this is some pretty slick C# right here.
-                Func<ModWiki, string> labelGetter = (w) => w.Mod.Content.Name;
-                Func<ModWiki, Action> actionGetter = (w) => w.Show;
+                string LabelGetter(ModWiki w) => w.Mod.Content.Name;
+                Action ActionGetter(ModWiki w) => w.Show;
 
-                FloatMenuUtility.MakeMenu(wikis, labelGetter, actionGetter);
+                FloatMenuUtility.MakeMenu(wikis, LabelGetter, ActionGetter);
             }
         }
     }

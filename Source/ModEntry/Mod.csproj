@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-    <Configurations>v1.2;v1.3;v1.4</Configurations>
+    <Configurations>v1.2;v1.3;v1.4;v1.5</Configurations>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <RootNamespace>InGameWikiMod</RootNamespace>
@@ -10,7 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lib.Harmony" Version="2.2.2" ExcludeAssets="runtime" />
+    <ProjectReference Include="..\InGameWiki\InGameWiki.csproj" />
+    <PackageReference Include="Lib.Harmony" Version="2.3.3" ExcludeAssets="runtime" />
   </ItemGroup>
 
   <!-- _____ 1.2 _____ -->
@@ -58,9 +59,6 @@
 		  <PrivateAssets>all</PrivateAssets>
 	  </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-	  <ProjectReference Include="..\InGameWiki\InGameWiki.csproj" />
-  </ItemGroup>
 
   <!-- Output -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='v1.4|AnyCPU'">
@@ -68,6 +66,23 @@
 	  <OutputPath>..\..\1.4\Assemblies\</OutputPath>
 	  <Optimize>true</Optimize>
 	  <DefineConstants>TRACE;V14</DefineConstants>
+  </PropertyGroup>
+
+  <!-- _____ 1.5 _____ -->
+
+  <!-- Rimworld assembly refs for latest 1.5 -->
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='v1.5|AnyCPU'">
+    <PackageReference Include="Krafs.Rimworld.Ref">
+      <Version>1.5.4060-beta</Version>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='v1.5|AnyCPU'">
+    <DebugType>none</DebugType>
+    <OutputPath>..\..\1.5\Assemblies\</OutputPath>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;V15;V15_OR_GREATER</DefineConstants>
   </PropertyGroup>
 
 </Project>

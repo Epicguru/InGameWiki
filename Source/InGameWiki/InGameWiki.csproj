@@ -6,9 +6,12 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <LangVersion>latest</LangVersion>
     <PackageId>Lib.InGameWiki</PackageId>
-    <Version>15.0.0</Version>
-    <AssemblyVersion>15.0.0</AssemblyVersion>
-    <FileVersion>15.0.0</FileVersion>
+    
+    <!-- VERSION-->
+    <Version>15.0.1</Version>
+    <AssemblyVersion>15.0.1</AssemblyVersion>
+    <FileVersion>15.0.1</FileVersion>
+    
     <Authors>Epicguru</Authors>
     <Company>Epicguru</Company>
     <Description>Adds support for the in-game wiki mod to your own mod. (Rimworld game)</Description>
@@ -33,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lib.Harmony" Version="2.3.3" ExcludeAssets="runtime" />
+    <PackageReference Include="Lib.Harmony" Version="2.3.3" ExcludeAssets="runtime" PrivateAssets="All" />
   </ItemGroup>
 
   <!-- _____ 1.2 _____ -->

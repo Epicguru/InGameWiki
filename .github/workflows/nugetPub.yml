@@ -1,51 +1,46 @@
-name: publish to nuget
+name: Publish to Nuget
 on:
   push:
     branches:
-      - master # Default release branch
+      - master
 jobs:
   publish:
-    name: build, pack & publish
-    runs-on: ubuntu-latest
+    name: Build and Publish
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      # - name: Setup dotnet
-      #   uses: actions/setup-dotnet@v1
-      #   with:
-      #     dotnet-version: 3.1.200
+      # Setup
+      - name: Setup .NET Core SDK 8.0.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+      - name: Install dependencies
+        run: dotnet restore Source/InGameWiki/InGameWiki.csproj
+      - name: Build
+        run: dotnet build Source/InGameWiki/InGameWiki.csproj --configuration v1.5
+      - name: Test
+        run: dotnet test Source/AnimationFramework --configuration v1.5 --verbosity normal
 
       # Publish
       - name: publish on version change
         id: publish_nuget
-        uses: rohith/publish-nuget@v2
+        uses: Epicguru/publish-nuget@v1.0.0
         with:
           # Filepath of the project to be packaged, relative to root of repository
           PROJECT_FILE_PATH: Source/InGameWiki/InGameWiki.csproj
-          
+
           # NuGet package id, used for version detection & defaults to project name
           PACKAGE_NAME: Lib.InGameWiki
-          
-          # Filepath with version info, relative to root of repository & defaults to PROJECT_FILE_PATH
-          # VERSION_FILE_PATH: Directory.Build.props
-
-          # Regex pattern to extract version info in a capturing group
-          # VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          
-          # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
-          # VERSION_STATIC: 1.0.0
-
-          # Flag to toggle git tagging, enabled by default
-          # TAG_COMMIT: true
-
-          # Format of the git tag, [*] gets replaced with actual version
-          # TAG_FORMAT: v*
 
           # API key to authenticate with NuGet server
           NUGET_KEY: ${{secrets.NUGET_API}}
 
-          # NuGet server uri hosting the packages, defaults to https://api.nuget.org
-          # NUGET_SOURCE: https://api.nuget.org
-
           # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
-          # INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
+
+          # Flag to toggle not building the project and letting pack command handle restoring & building, disabled by default
+          NO_BUILD: true
+
+          # Config
+          CONFIGURATION: v1.5

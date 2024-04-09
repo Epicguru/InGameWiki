@@ -37,7 +37,7 @@ jobs:
           NUGET_KEY: ${{secrets.NUGET_API}}
 
           # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
-          INCLUDE_SYMBOLS: true
+          INCLUDE_SYMBOLS: false
 
           # Flag to toggle not building the project and letting pack command handle restoring & building, disabled by default
           NO_BUILD: true

@@ -8,19 +8,19 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: ['2.0.x']
         mod-version: ['v1.2', 'v1.3', 'v1.4', 'v1.5', 'v1.6']
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v1.7.2
+      - uses: actions/checkout@v4.2.2
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4.3.1
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
+          dotnet-version: 8.x
+
       - name: Install dependencies
         run: dotnet restore ./Source/InGameWiki/InGameWiki.csproj
+
       - name: Build
         run: dotnet build ./Source/InGameWiki/InGameWiki.csproj -c ${{ matrix.mod-version }}
-        with:
-          mod-version: ${{ matrix.mod-version }}
 

@@ -17,10 +17,10 @@ jobs:
         uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
+
       - name: Install dependencies
         run: dotnet restore ./Source/InGameWiki/InGameWiki.csproj
+
       - name: Build
         run: dotnet build ./Source/InGameWiki/InGameWiki.csproj -c ${{ matrix.mod-version }}
-        with:
-          mod-version: ${{ matrix.mod-version }}
 

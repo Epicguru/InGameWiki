@@ -9,6 +9,7 @@ jobs:
     strategy:
       matrix:
         dotnet-version: ['2.0.x']
+        mod-version: ['v1.2', 'v1.3', 'v1.4', 'v1.5', 'v1.6']
 
     steps:
       - uses: actions/checkout@v2
@@ -19,4 +20,7 @@ jobs:
       - name: Install dependencies
         run: dotnet restore ./Source/InGameWiki/InGameWiki.csproj
       - name: Build
-        run: dotnet build ./Source/InGameWiki/InGameWiki.csproj --configuration Release --no-restore
+        run: dotnet build ./Source/InGameWiki/InGameWiki.csproj -c ${{ matrix.mod-version }}
+        with:
+          mod-version: ${{ matrix.mod-version }}
+

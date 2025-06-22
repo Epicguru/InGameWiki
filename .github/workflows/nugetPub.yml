@@ -1,0 +1,46 @@
+name: Publish to Nuget
+on:
+  push:
+    branches:
+      - master
+jobs:
+  publish:
+    name: Build and Publish
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Setup
+      - name: Setup .NET Core SDK 8.0.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+      - name: Install dependencies
+        run: dotnet restore Source/InGameWiki/InGameWiki.csproj
+      - name: Build
+        run: dotnet build Source/InGameWiki/InGameWiki.csproj --configuration v1.5
+      - name: Test
+        run: dotnet test Source/InGameWiki/InGameWiki.csproj --configuration v1.5 --verbosity normal
+
+      # Publish
+      - name: publish on version change
+        id: publish_nuget
+        uses: Epicguru/publish-nuget@v1.0.0
+        with:
+          # Filepath of the project to be packaged, relative to root of repository
+          PROJECT_FILE_PATH: Source/InGameWiki/InGameWiki.csproj
+
+          # NuGet package id, used for version detection & defaults to project name
+          PACKAGE_NAME: Lib.InGameWiki
+
+          # API key to authenticate with NuGet server
+          NUGET_KEY: ${{secrets.NUGET_API}}
+
+          # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
+          INCLUDE_SYMBOLS: false
+
+          # Flag to toggle not building the project and letting pack command handle restoring & building, disabled by default
+          NO_BUILD: true
+
+          # Config
+          CONFIGURATION: v1.5

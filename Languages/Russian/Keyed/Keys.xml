@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+<Wiki.Show>Показать</Wiki.Show>
+<Wiki.Hide>Скрыть</Wiki.Hide>
+<Wiki.Link>Ссылка</Wiki.Link>
+<Wiki.LinkBroken>Ссылка (Сломана, сообщите мне об этом)</Wiki.LinkBroken>
+<Wiki.Spoiler>спойлер</Wiki.Spoiler>
+<Wiki.HiddenWarning>{0} страниц скрыто в связи с настройками спойлеров.</Wiki.HiddenWarning>
+<Wiki.HideSpoilerMode>Скрывать спойлеры: </Wiki.HideSpoilerMode>
+
+<!-- Autogen stuff -->
+<Wiki.Cost>Необходимые ресурсы</Wiki.Cost>
+<Wiki.CraftedAt>Создается с помощью</Wiki.CraftedAt>
+<Wiki.ResearchToUnlock>Необходимое исследование</Wiki.ResearchToUnlock>
+
+<!-- Misc -->
+<Wiki.OpenWikiPage>Открыть страницу предмета на вики</Wiki.OpenWikiPage>
+
+ </LanguageData>

@@ -8,15 +8,15 @@
     <PackageId>Lib.InGameWiki</PackageId>
     
     <!-- VERSION-->
-    <Version>15.0.1</Version>
-    <AssemblyVersion>15.0.1</AssemblyVersion>
-    <FileVersion>15.0.1</FileVersion>
+    <Version>16.0.1</Version>
+    <AssemblyVersion>16.0.1</AssemblyVersion>
+    <FileVersion>16.0.1</FileVersion>
     
     <Authors>Epicguru</Authors>
     <Company>Epicguru</Company>
     <Description>Adds support for the in-game wiki mod to your own mod. (Rimworld game)</Description>
     <Copyright />
-    <Configurations>v1.2;v1.3;v1.4;v1.5</Configurations>
+    <Configurations>v1.2;v1.3;v1.4;v1.5;v1.6</Configurations>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Epicguru/InGameWiki</PackageProjectUrl>
     <PackageIcon>Icon.png</PackageIcon>
@@ -24,6 +24,7 @@
     <PackageReleaseNotes>Added ability to add custom elements in pages.</PackageReleaseNotes>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,7 +37,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lib.Harmony" Version="2.3.3" ExcludeAssets="runtime" PrivateAssets="All" />
+    <PackageReference Include="Lib.Harmony" Version="2.3.6" ExcludeAssets="runtime" PrivateAssets="all">
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <!-- _____ 1.2 _____ -->
@@ -106,6 +109,24 @@
     <OutputPath>..\..\1.5\Assemblies\</OutputPath>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE;V15;V15_OR_GREATER</DefineConstants>
+  </PropertyGroup>
+
+  <!-- _____ 1.6 _____ -->
+
+  <!-- Rimworld assembly refs for latest 1.6 -->
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='v1.6|AnyCPU'">
+    <PackageReference Include="Krafs.Rimworld.Ref">
+      <Version>1.6.4498-beta</Version>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Output -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='v1.6|AnyCPU'">
+    <DebugType>none</DebugType>
+    <OutputPath>..\..\1.6\Assemblies\</OutputPath>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;V16;V15_OR_GREATER;V16_OR_GREATER</DefineConstants>
   </PropertyGroup>
 
 </Project>

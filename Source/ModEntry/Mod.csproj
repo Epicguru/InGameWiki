@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-    <Configurations>v1.2;v1.3;v1.4;v1.5</Configurations>
+    <Configurations>v1.2;v1.3;v1.4;v1.5;v1.6</Configurations>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <RootNamespace>InGameWikiMod</RootNamespace>
     <AssemblyName>InGameWikiMod</AssemblyName>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -83,6 +84,23 @@
     <OutputPath>..\..\1.5\Assemblies\</OutputPath>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE;V15;V15_OR_GREATER</DefineConstants>
+  </PropertyGroup>
+
+  <!-- _____ 1.6 _____ -->
+
+  <!-- Rimworld assembly refs for latest 1.6 -->
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='v1.6|AnyCPU'">
+    <PackageReference Include="Krafs.Rimworld.Ref">
+      <Version>1.6.4498-beta</Version>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='v1.6|AnyCPU'">
+    <DebugType>none</DebugType>
+    <OutputPath>..\..\1.6\Assemblies\</OutputPath>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;V16;V15_OR_GREATER;V16_OR_GREATER</DefineConstants>
   </PropertyGroup>
 
 </Project>

@@ -18,9 +18,9 @@ jobs:
       - name: Install dependencies
         run: dotnet restore Source/InGameWiki/InGameWiki.csproj
       - name: Build
-        run: dotnet build Source/InGameWiki/InGameWiki.csproj --configuration v1.5
+        run: dotnet build Source/InGameWiki/InGameWiki.csproj --configuration v1.6
       - name: Test
-        run: dotnet test Source/InGameWiki/InGameWiki.csproj --configuration v1.5 --verbosity normal
+        run: dotnet test Source/InGameWiki/InGameWiki.csproj --configuration v1.6 --verbosity normal
 
       # Publish
       - name: publish on version change
@@ -43,4 +43,4 @@ jobs:
           NO_BUILD: true
 
           # Config
-          CONFIGURATION: v1.5
+          CONFIGURATION: v1.6
